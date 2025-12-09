@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Datos - API Google Sheets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Formulario de Registro</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="formularioRegistro">
+                            
+                            <div class="mb-3">
+                                <label for="dni" class="form-label">DNI</label>
+                                <input type="number" class="form-control" id="dni" required placeholder="Ej: 12345678">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" required placeholder="Ej: Nombres">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="paterno" class="form-label">Apellido Paterno</label>
+                                <input type="text" class="form-control" id="paterno" required placeholder="Ej: Apellido Paterno">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="materno" class="form-label">Apellido Materno</label>
+                                <input type="text" class="form-control" id="materno" required placeholder="Ej: Apellido Materno">
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success" id="btnEnviar">
+                                    Registrar Datos
+                                </button>
+                            </div>
+                        </form>
+
+                        <div id="mensajeEstado" class="mt-3 alert d-none" role="alert"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN: PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
+        const URL_API = "https://script.google.com/macros/s/AKfycbyfCTS4kjZuzawuxaXZHUjjzK2hzZ6F0zOpG7jpyJEPu4BkngjRtXhr__K2TmR1q3h3/exec"; 
+        // ==========================================
+
+        const form = document.getElementById('formularioRegistro');
+        const mensajeDiv = document.getElementById('mensajeEstado');
+        const btnEnviar = document.getElementById('btnEnviar');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Evita que la página se recargue
+
+            // 1. Mostrar estado de "Cargando"
+            btnEnviar.disabled = true;
+            btnEnviar.textContent = "Enviando...";
+            mensajeDiv.className = "mt-3 alert alert-info";
+            mensajeDiv.textContent = "Procesando solicitud...";
+            mensajeDiv.classList.remove("d-none");
+
+            // 2. Capturar los datos del formulario
+            const datos = {
+                dni: document.getElementById('dni').value,
+                nombre: document.getElementById('nombre').value,
+                apellido_paterno: document.getElementById('paterno').value,
+                apellido_materno: document.getElementById('materno').value
+            };
+
+            // 3. Enviar petición POST usando fetch
+            fetch(URL_API, {
+                method: "POST",
+                // Usamos text/plain para evitar problemas de CORS con Google Apps Script,
+                // aunque el contenido sea un JSON string válido.
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Éxito
+                console.log(data);
+                mensajeDiv.className = "mt-3 alert alert-success";
+                mensajeDiv.textContent = "¡Registro exitoso! Guardado en Sheets.";
+                form.reset(); // Limpiar formulario
+            })
+            .catch(error => {
+                // Error
+                console.error("Error:", error);
+                mensajeDiv.className = "mt-3 alert alert-danger";
+                mensajeDiv.textContent = "Hubo un error al enviar los datos.";
+            })
+            .finally(() => {
+                // Restaurar botón
+                btnEnviar.disabled = false;
+                btnEnviar.textContent = "Registrar Datos";
+            });
+        });
+    </script>
+</body>
+</html>
