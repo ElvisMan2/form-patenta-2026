@@ -55,7 +55,7 @@
     <script>
         // ==========================================
         // CONFIGURACIÓN: PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
-        const URL_API = "https://script.google.com/macros/s/AKfycbzFFdb_ch49hq_cc4KtyYVxCc-ucBf4OoIKV5txVd1F5knoa4S84EsN85H_M_sEgEc3/exec"; 
+        const URL_API = "https://script.google.com/macros/s/AKfycbwLQicXDRoULI5kqh9p64xOnbUNtG6kaISZvDzej6maY3ybg0eO8q3Z431uFL4d4UeW/exec"; 
         // ==========================================
 
         const form = document.getElementById('formularioRegistro');
@@ -76,8 +76,8 @@
             const datos = {
                 dni: document.getElementById('dni').value,
                 nombre: document.getElementById('nombre').value,
-                apellido_paterno: document.getElementById('paterno').value,
-                apellido_materno: document.getElementById('materno').value
+                apellidoPaterno: document.getElementById('paterno').value,
+                apellidoMaterno: document.getElementById('materno').value
             };
 
             // 3. Enviar petición POST usando fetch
@@ -90,13 +90,12 @@
                 },
                 body: JSON.stringify(datos)
             })
-            .then(response => response.json())
-            .then(data => {
-                // Éxito
-                console.log(data);
+            .then(response => response.text())
+            .then(text => {
+                console.log("Respuesta cruda:", text);
                 mensajeDiv.className = "mt-3 alert alert-success";
-                mensajeDiv.textContent = "¡Registro exitoso! Guardado en Sheets.";
-                form.reset(); // Limpiar formulario
+                mensajeDiv.textContent = text;
+                form.reset();
             })
             .catch(error => {
                 // Error
