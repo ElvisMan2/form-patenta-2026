@@ -26,54 +26,6 @@ function subirArchivo(fileBlob, fileName) {
 }
 
 /**
- * Sube un archivo de texto a Drive
- * @param {string} contenido - Contenido del archivo
- * @param {string} nombreArchivo - Nombre del archivo
- * @return {File} El archivo creado
- */
-function subirArchivoTexto(contenido, nombreArchivo) {
-  try {
-    const folder = DriveApp.getFolderById(FOLDER_ID);
-    const file = folder.createFile(nombreArchivo, contenido);
-    
-    Logger.log('Archivo de texto subido: ' + file.getUrl());
-    return file;
-  } catch (error) {
-    Logger.log('Error: ' + error.message);
-    throw error;
-  }
-}
-
-/**
- * Sube un archivo desde una URL
- * @param {string} url - URL del archivo a descargar
- * @param {string} nombreArchivo - Nombre para el archivo
- * @return {File} El archivo creado
- */
-function subirDesdeURL(url, nombreArchivo) {
-  try {
-    const response = UrlFetchApp.fetch(url);
-    const blob = response.getBlob();
-    
-    return subirArchivo(blob, nombreArchivo);
-  } catch (error) {
-    Logger.log('Error al descargar/subir archivo: ' + error.message);
-    throw error;
-  }
-}
-
-/**
- * Ejemplo de uso: función de prueba
- */
-function ejemploUso() {
-  // Ejemplo 1: Subir archivo de texto
-  subirArchivoTexto('Hola Mundo!', 'ejemplo.txt');
-  
-  // Ejemplo 2: Subir desde URL
-  // subirDesdeURL('https://ejemplo.com/archivo.pdf', 'documento.pdf');
-}
-
-/**
  * Maneja peticiones POST desde Postman o cualquier cliente HTTP
  * @param {Object} e - Objeto del evento con los parámetros de la petición
  * @return {TextOutput} Respuesta JSON
@@ -83,38 +35,19 @@ function doPost(e) {
     const params = JSON.parse(e.postData.contents);
     
     // Validar parámetros
-    if (!params.nombreArchivo) {
+    if (!params.nombreArchivo || !params.archivoBase64) {
       return createResponse({
         success: false,
-        message: 'El parámetro nombreArchivo es requerido'
+        message: 'Los parámetros nombreArchivo y archivoBase64 son requeridos'
       });
     }
     
-    let file;
-    
-    // Opción 1: Archivo en base64
-    if (params.archivoBase64) {
-      const blob = Utilities.newBlob(
-        Utilities.base64Decode(params.archivoBase64),
-        params.mimeType || 'application/octet-stream',
-        params.nombreArchivo
-      );
-      file = subirArchivo(blob, params.nombreArchivo);
-    }
-    // Opción 2: Solo contenido de texto
-    else if (params.contenido) {
-      file = subirArchivoTexto(params.contenido, params.nombreArchivo);
-    }
-    // Opción 3: Descargar desde URL
-    else if (params.url) {
-      file = subirDesdeURL(params.url, params.nombreArchivo);
-    }
-    else {
-      return createResponse({
-        success: false,
-        message: 'Debe proporcionar: archivoBase64, contenido o url'
-      });
-    }
+    const blob = Utilities.newBlob(
+      Utilities.base64Decode(params.archivoBase64),
+      params.mimeType || 'application/octet-stream',
+      params.nombreArchivo
+    );
+    const file = subirArchivo(blob, params.nombreArchivo);
     
     return createResponse({
       success: true,
@@ -140,10 +73,10 @@ function doGet(e) {
   const response = {
     success: true,
     message: 'Servicio activo. Use POST para subir archivos.',
-    opciones: {
-      opcion1: { archivoBase64: 'string', nombreArchivo: 'string', mimeType: 'string (opcional)' },
-      opcion2: { contenido: 'string', nombreArchivo: 'string' },
-      opcion3: { url: 'string', nombreArchivo: 'string' }
+    parametros: {
+      archivoBase64: 'string (requerido)',
+      nombreArchivo: 'string (requerido)',
+      mimeType: 'string (opcional)'
     }
   };
   
