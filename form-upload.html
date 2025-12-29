@@ -3,274 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subir Archivo a Google Drive</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-        }
-
-        input[type="text"],
-        input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="file"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .file-info {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 5px;
-            font-size: 13px;
-            color: #666;
-            display: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .message {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .message a {
-            color: inherit;
-            font-weight: 600;
-            text-decoration: underline;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <title>Form envio archivos</title>
+    
 </head>
 <body>
-    <div class="container">
-        <h1>📤 Subir Archivo a Drive</h1>
-        
-        <form id="uploadForm">
-            <div class="form-group">
-                <label for="fileName">Nombre del archivo (opcional):</label>
-                <input type="text" id="fileName" placeholder="Dejar vacío para usar el nombre original">
-            </div>
+    <style>
+  .form-concurso {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .form-concurso .form-group {
+    margin-bottom: 15px;
+  }
+  .form-concurso label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+  .form-concurso input,
+  .form-concurso select,
+  .form-concurso textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .form-concurso input[type="file"] {
+    padding: 8px;
+  }
+  .form-concurso .btn-submit {
+    background-color: #0073aa;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  .form-concurso .btn-submit:hover {
+    background-color: #005a87;
+  }
+  .form-concurso .btn-submit:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  .form-concurso .mensaje {
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 4px;
+    display: none;
+  }
+  .form-concurso .mensaje.exito {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  .form-concurso .mensaje.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  .form-concurso .required::after {
+    content: " *";
+    color: red;
+  }
+  .form-concurso .loader {
+    display: none;
+    text-align: center;
+    margin: 10px 0;
+  }
+</style>
 
-            <div class="form-group">
-                <label for="fileInput">Seleccionar archivo:</label>
-                <input type="file" id="fileInput" required>
-                <div class="file-info" id="fileInfo"></div>
-            </div>
-
-            <button type="submit" id="submitBtn">Subir Archivo</button>
-        </form>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Subiendo archivo...</p>
-        </div>
-
-        <div class="message" id="message"></div>
+<div class="form-concurso">
+  <form id="formConcurso">
+    <div class="form-group">
+      <label class="required" for="tipoParticipante">Tipo de Participante</label>
+      <select id="tipoParticipante" name="tipoParticipante" required>
+        <option value="">Seleccione...</option>
+        <option value="Persona Natural">Persona Natural</option>
+        <option value="Empresa">Empresa</option>
+        <option value="Institución">Institución</option>
+      </select>
     </div>
 
-    <script>
-        // URL del Google Apps Script
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbykPfckhcMZKm9Uf-43T6Y80G_SRm6JN8Peii-y2dtHDUm-4rty4l97VtZgF1Q3kiHO/exec';
-        
-        const form = document.getElementById('uploadForm');
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const message = document.getElementById('message');
-        const loading = document.getElementById('loading');
-        const submitBtn = document.getElementById('submitBtn');
+    <div class="form-group">
+      <label for="nombreInstitucionEmpresa">Nombre de Institución/Empresa</label>
+      <input type="text" id="nombreInstitucionEmpresa" name="nombreInstitucionEmpresa">
+    </div>
 
-        // Mostrar información del archivo seleccionado
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-                fileInfo.textContent = `Archivo: ${file.name} | Tamaño: ${sizeInMB} MB | Tipo: ${file.type}`;
-                fileInfo.style.display = 'block';
-            } else {
-                fileInfo.style.display = 'none';
-            }
-        });
+    <div class="form-group">
+      <label class="required" for="titulo">Título del Proyecto</label>
+      <input type="text" id="titulo" name="titulo" required>
+    </div>
 
-        // Manejar el envío del formulario
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const fileName = document.getElementById('fileName').value.trim();
-            const file = fileInput.files[0];
+    <div class="form-group">
+      <label class="required" for="sectorTecnologico">Sector Tecnológico</label>
+      <select id="sectorTecnologico" name="sectorTecnologico" required>
+        <option value="">Seleccione...</option>
+        <option value="Biotecnología">Biotecnología</option>
+        <option value="TIC">TIC</option>
+        <option value="Energía">Energía</option>
+        <option value="Agroindustria">Agroindustria</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
 
-            if (!file) {
-                showMessage('Por favor selecciona un archivo', 'error');
-                return;
-            }
+    <div class="form-group">
+      <label class="required" for="apellidosRepresentante">Apellidos del Representante</label>
+      <input type="text" id="apellidosRepresentante" name="apellidosRepresentante" required>
+    </div>
 
-            try {
-                // Mostrar loading
-                loading.style.display = 'block';
-                message.style.display = 'none';
-                submitBtn.disabled = true;
+    <div class="form-group">
+      <label class="required" for="nombreRepresentante">Nombres del Representante</label>
+      <input type="text" id="nombreRepresentante" name="nombreRepresentante" required>
+    </div>
 
-                // Convertir archivo a base64
-                const base64 = await fileToBase64(file);
+    <div class="form-group">
+      <label class="required" for="dni">DNI</label>
+      <input type="text" id="dni" name="dni" maxlength="8" pattern="[0-9]{8}" required>
+    </div>
 
-                // Preparar datos
-                const payload = {
-                    archivoBase64: base64,
-                    nombreArchivo: fileName || file.name,
-                    mimeType: file.type || 'application/octet-stream'
-                };
+    <div class="form-group">
+      <label class="required" for="telefono">Teléfono</label>
+      <input type="tel" id="telefono" name="telefono" required>
+    </div>
 
-                // Enviar petición
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
+    <div class="form-group">
+      <label for="telefonoAlternativo">Teléfono Alternativo</label>
+      <input type="tel" id="telefonoAlternativo" name="telefonoAlternativo">
+    </div>
 
-                const result = await response.json();
+    <div class="form-group">
+      <label class="required" for="correo">Correo Electrónico</label>
+      <input type="email" id="correo" name="correo" required>
+    </div>
 
-                if (result.success) {
-                    showMessage(
-                        `✅ ${result.message}<br>` +
-                        `<strong>Archivo:</strong> ${result.fileName}<br>` +
-                        `<a href="${result.fileUrl}" target="_blank">Ver en Drive</a>`,
-                        'success'
-                    );
-                    form.reset();
-                    fileInfo.style.display = 'none';
-                } else {
-                    showMessage(`❌ Error: ${result.message}`, 'error');
-                }
+    <div class="form-group">
+      <label for="correoAlternativo">Correo Alternativo</label>
+      <input type="email" id="correoAlternativo" name="correoAlternativo">
+    </div>
 
-            } catch (error) {
-                showMessage(`❌ Error al subir el archivo: ${error.message}`, 'error');
-            } finally {
-                loading.style.display = 'none';
-                submitBtn.disabled = false;
-            }
-        });
+    <div class="form-group">
+      <label class="required" for="region">Región</label>
+      <select id="region" name="region" required>
+        <option value="">Seleccione...</option>
+        <option value="Lima">Lima</option>
+        <option value="Arequipa">Arequipa</option>
+        <option value="Cusco">Cusco</option>
+        <option value="La Libertad">La Libertad</option>
+        <option value="Piura">Piura</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
 
-        // Convertir archivo a base64
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => {
-                    // Remover el prefijo "data:*/*;base64,"
-                    const base64 = reader.result.split(',')[1];
-                    resolve(base64);
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
+    <div class="form-group">
+      <label for="fichaPostulante">Ficha de Postulante (PDF)</label>
+      <input type="file" id="fichaPostulante" name="fichaPostulante" accept=".pdf">
+    </div>
 
-        // Mostrar mensaje
-        function showMessage(text, type) {
-            message.innerHTML = text;
-            message.className = `message ${type}`;
-            message.style.display = 'block';
-        }
-    </script>
+    <div class="form-group">
+      <label for="fichaInvencion">Ficha de Invención (PDF)</label>
+      <input type="file" id="fichaInvencion" name="fichaInvencion" accept=".pdf">
+    </div>
+
+    <div class="form-group">
+      <label for="actaCompromiso">Acta de Compromiso (PDF)</label>
+      <input type="file" id="actaCompromiso" name="actaCompromiso" accept=".pdf">
+    </div>
+
+    <div class="loader" id="loader">
+      <p>Enviando formulario, por favor espere...</p>
+    </div>
+
+    <button type="submit" class="btn-submit" id="btnSubmit">Enviar Formulario</button>
+  </form>
+
+  <div class="mensaje" id="mensaje"></div>
+</div>
+
+<script>
+(function() {
+  // URL del Web App de Google Apps Script (reemplazar con tu URL)
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0nt88YZ2qo6Tw0m211rXnVJXiXxm2iJK05AkyJ7EglLtMJg51dUY1qOklt1tp0KwS/exec';
+
+  const form = document.getElementById('formConcurso');
+  const mensaje = document.getElementById('mensaje');
+  const loader = document.getElementById('loader');
+  const btnSubmit = document.getElementById('btnSubmit');
+
+  // Convertir archivo a Base64
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        resolve({ base64: '', nombre: '' });
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve({ base64: reader.result, nombre: file.name });
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  // Mostrar mensaje
+  function mostrarMensaje(texto, tipo) {
+    mensaje.textContent = texto;
+    mensaje.className = 'mensaje ' + tipo;
+    mensaje.style.display = 'block';
+  }
+
+  // Manejar envío del formulario
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    btnSubmit.disabled = true;
+    loader.style.display = 'block';
+    mensaje.style.display = 'none';
+
+    try {
+      // Obtener archivos
+      const fichaPostulanteFile = document.getElementById('fichaPostulante').files[0];
+      const fichaInvencionFile = document.getElementById('fichaInvencion').files[0];
+      const actaCompromisoFile = document.getElementById('actaCompromiso').files[0];
+
+      // Convertir archivos a Base64
+      const [fichaPostulante, fichaInvencion, actaCompromiso] = await Promise.all([
+        fileToBase64(fichaPostulanteFile),
+        fileToBase64(fichaInvencionFile),
+        fileToBase64(actaCompromisoFile)
+      ]);
+
+      // Construir objeto de datos
+      const datos = {
+        tipoParticipante: document.getElementById('tipoParticipante').value,
+        nombreInstitucionEmpresa: document.getElementById('nombreInstitucionEmpresa').value,
+        titulo: document.getElementById('titulo').value,
+        sectorTecnologico: document.getElementById('sectorTecnologico').value,
+        apellidosRepresentante: document.getElementById('apellidosRepresentante').value,
+        nombreRepresentante: document.getElementById('nombreRepresentante').value,
+        dni: document.getElementById('dni').value,
+        telefono: document.getElementById('telefono').value,
+        telefonoAlternativo: document.getElementById('telefonoAlternativo').value,
+        correo: document.getElementById('correo').value,
+        correoAlternativo: document.getElementById('correoAlternativo').value,
+        region: document.getElementById('region').value,
+        fichaPostulanteBase64: fichaPostulante.base64,
+        fichaPostulanteNombreArchivo: fichaPostulante.nombre,
+        fichaInvencionBase64: fichaInvencion.base64,
+        fichaInvencionNombreArchivo: fichaInvencion.nombre,
+        actaCompromisoBase64: actaCompromiso.base64,
+        actaCompromisoNombreArchivo: actaCompromiso.nombre
+      };
+
+      // Enviar datos al Apps Script
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datos)
+      });
+
+      // Con no-cors no podemos leer la respuesta, asumimos éxito
+      mostrarMensaje('¡Formulario enviado exitosamente! Gracias por su participación.', 'exito');
+      form.reset();
+
+    } catch (error) {
+      console.error('Error:', error);
+      mostrarMensaje('Error al enviar el formulario: ' + error.message, 'error');
+    } finally {
+      btnSubmit.disabled = false;
+      loader.style.display = 'none';
+    }
+  });
+})();
+</script>
+
+
+
 </body>
 </html>
