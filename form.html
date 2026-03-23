@@ -1,322 +1,859 @@
-<!doctype html>
-<html lang="es">
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Formulario de Inscripcion</title>
-	<style>
-		:root {
-			--bg: #f5f7fb;
-			--panel: #ffffff;
-			--text: #1f2937;
-			--muted: #6b7280;
-			--brand: #0f766e;
-			--brand-2: #115e59;
-			--border: #d1d5db;
-			--ok: #065f46;
-			--error: #991b1b;
-		}
+<style>
+  .form-concurso {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .form-concurso .form-group {
+    margin-bottom: 15px;
+  }
+  .form-concurso label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+  .form-concurso input,
+  .form-concurso select,
+  .form-concurso textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .form-concurso input[type="file"] {
+    padding: 8px;
+  }
+  .form-concurso .btn-submit {
+    background-color: #0073aa;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  .form-concurso .btn-submit:hover {
+    background-color: #005a87;
+  }
+  .form-concurso .btn-submit:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  .form-concurso .mensaje {
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 4px;
+    display: none;
+  }
+  .form-concurso .mensaje.exito {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  .form-concurso .mensaje.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  .form-concurso .required::after {
+    content: " *";
+    color: red;
+  }
+  .form-concurso select:invalid,
+  .form-concurso input:invalid {
+    border-color: #ccc;
+  }
+  .form-concurso select:invalid:focus,
+  .form-concurso input:invalid:focus {
+    border-color: #dc3545;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+  }
+  .form-concurso.was-validated select:invalid,
+  .form-concurso.was-validated input:invalid {
+    border-color: #dc3545;
+    background-color: #fff8f8;
+  }
+  .form-concurso .loader {
+    display: none;
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  /* Estilos del Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.activo {
+    display: flex;
+  }
+  .modal-contenido {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  .modal-contenido.exito {
+    border-top: 5px solid #28a745;
+  }
+  .modal-contenido.error {
+    border-top: 5px solid #dc3545;
+  }
+  .modal-contenido.cargando {
+    border-top: 5px solid #0073aa;
+  }
+  .modal-contenido h2 {
+    margin-top: 0;
+    color: #333;
+  }
+  .modal-contenido.exito h2 {
+    color: #28a745;
+  }
+  .modal-contenido.error h2 {
+    color: #dc3545;
+  }
+  .modal-contenido.cargando h2 {
+    color: #0073aa;
+  }
+  .modal-contenido p {
+    color: #555;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .modal-contenido .hora-envio {
+    font-size: 14px;
+    color: #888;
+    margin-top: 15px;
+  }
+  .modal-contenido .btn-cerrar {
+    background-color: #0073aa;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 20px auto 0;
+    display: block;
+  }
+  .modal-contenido .btn-cerrar:hover {
+    background-color: #005a87;
+  }
+  
+  /* Spinner de carga */
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0073aa;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
 
-		* { box-sizing: border-box; }
+<div class="form-concurso">
+  <form id="formConcurso">
+    <!-- Campo honeypot (oculto para humanos, visible para bots) -->
+    <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
+      <label for="honeypot">No llenar este campo</label>
+      <input type="text" id="honeypot" name="honeypot" tabindex="-1" autocomplete="off">
+    </div>
 
-		body {
-			margin: 0;
-			font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
-			background: radial-gradient(circle at top right, #e6fffa 0%, var(--bg) 40%);
-			color: var(--text);
-			padding: 24px;
-		}
+    <div class="form-group">
+      <label class="required" for="tipoParticipante">Tipo de Participante</label>
+      <select id="tipoParticipante" name="tipoParticipante" required>
+        <option value="">Seleccione...</option>
+        <option value="Diseñador Independiente">Diseñador Independiente</option>
+        <option value="Empresa">Empresa</option>
+        <option value="Centros académicos y de investigación">Centros académicos y de investigación</option>
+      </select>
+    </div>
 
-		.wrap {
-			max-width: 840px;
-			margin: 0 auto;
-			background: var(--panel);
-			border: 1px solid var(--border);
-			border-radius: 14px;
-			padding: 22px;
-			box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
-		}
+    <div class="form-group" id="grupoNombreInstitucion" style="display: none;">
+      <label class="required" for="nombreInstitucionEmpresa">Nombre de Institución / Empresa</label>
+      <input type="text" id="nombreInstitucionEmpresa" name="nombreInstitucionEmpresa">
+    </div>
 
-		h1 {
-			margin: 0 0 8px;
-			font-size: 1.5rem;
-		}
+    <div class="form-group">
+      <label class="required" for="titulo">Título del Proyecto</label>
+      <input type="text" id="titulo" name="titulo" required>
+    </div>
 
-		p {
-			margin: 0 0 18px;
-			color: var(--muted);
-		}
+    <div class="form-group">
+      <label class="required" for="sectorTecnologico">Sector Tecnológico</label>
+      <select id="sectorTecnologico" name="sectorTecnologico" required>
+        <option value="">Seleccione...</option>
+        <option value="Agropecuario y agroindustria">Agropecuario y agroindustria</option>
+        <option value="Vivienda y saneamiento">Vivienda y saneamiento</option>
+        <option value="Energia y transporte">Energía y transporte</option>
+        <option value="Biotecnologia y medicina">Biotecnología y medicina</option>
+        <option value="Mineria y metalurgia">Minería y metalurgia</option>
+        <option value="Medio ambiente">Medio ambiente</option>
+        <option value="Telecomunicaciones y electronica">Telecomunicaciones y electrónica</option>
+        <option value="Utilitarios y otros">Utilitarios y otros</option>
+      </select>
+    </div>
 
-		form {
-			display: grid;
-			gap: 14px;
-		}
+    <div class="form-group">
+      <label class="required" for="apellidosRepresentante">Apellidos del Representante</label>
+      <input type="text" id="apellidosRepresentante" name="apellidosRepresentante" required>
+    </div>
 
-		.grid {
-			display: grid;
-			gap: 12px;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
+    <div class="form-group">
+      <label class="required" for="nombreRepresentante">Nombres del Representante</label>
+      <input type="text" id="nombreRepresentante" name="nombreRepresentante" required>
+    </div>
 
-		.full { grid-column: 1 / -1; }
+    <div class="form-group">
+      <label class="required" for="dni">DNI</label>
+      <input type="text" id="dni" name="dni" maxlength="8" 
+             pattern="[0-9]{8}" 
+             title="El DNI debe contener 8 dígitos"
+             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+             required>
+    </div>
 
-		label {
-			display: block;
-			font-weight: 600;
-			margin-bottom: 6px;
-			font-size: 0.94rem;
-		}
+    <div class="form-group">
+      <label class="required" for="telefono">Teléfono</label>
+      <input type="tel" id="telefono" name="telefono" 
+             pattern="[0-9+\-]{7,15}"
+             title="El teléfono debe contener al menos 7 dígitos"
+             oninput="this.value = this.value.replace(/[^0-9+\-]/g, '')"
+             required>
+    </div>
 
-		input,
-		textarea,
-		select {
-			width: 100%;
-			border: 1px solid var(--border);
-			border-radius: 10px;
-			padding: 10px 12px;
-			font: inherit;
-			color: inherit;
-			background: #fff;
-		}
+    <div class="form-group">
+      <label class="required" for="telefonoAlternativo">Teléfono Alternativo</label>
+      <input type="tel" id="telefonoAlternativo" name="telefonoAlternativo" 
+             pattern="[0-9+\-]{7,15}"
+             title="El teléfono debe contener al menos 7 dígitos"
+             oninput="this.value = this.value.replace(/[^0-9+\-]/g, '')"
+             required>
+    </div>
 
-		textarea {
-			min-height: 120px;
-			resize: vertical;
-		}
+    <div class="form-group">
+      <label class="required" for="correo">Correo Electrónico</label>
+      <input type="email" id="correo" name="correo" 
+             pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+             title="Ingrese un correo electrónico válido (ejemplo: usuario@dominio.com)"
+             required>
+    </div>
 
-		button {
-			border: 0;
-			border-radius: 10px;
-			padding: 11px 16px;
-			font: inherit;
-			font-weight: 700;
-			background: var(--brand);
-			color: white;
-			cursor: pointer;
-			width: fit-content;
-		}
+    <div class="form-group">
+      <label class="required" for="correoAlternativo">Correo Alternativo</label>
+      <input type="email" id="correoAlternativo" name="correoAlternativo" 
+             pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+             title="Ingrese un correo electrónico válido (ejemplo: usuario@dominio.com)"
+             required>
+    </div>
 
-		button:hover { background: var(--brand-2); }
-		button:disabled { opacity: 0.7; cursor: wait; }
+    <div class="form-group">
+      <label class="required" for="region">Región</label>
+      <select id="region" name="region" required>
+        <option value="">Seleccione...</option>
+        <option value="Amazonas">Amazonas</option>
+        <option value="Áncash">Áncash</option>
+        <option value="Apurímac">Apurímac</option>
+        <option value="Arequipa">Arequipa</option>
+        <option value="Ayacucho">Ayacucho</option>
+        <option value="Cajamarca">Cajamarca</option>
+        <option value="Callao">Callao</option>
+        <option value="Cusco">Cusco</option>
+        <option value="Huancavelica">Huancavelica</option>
+        <option value="Huánuco">Huánuco</option>
+        <option value="Ica">Ica</option>
+        <option value="Junín">Junín</option>
+        <option value="La Libertad">La Libertad</option>
+        <option value="Lambayeque">Lambayeque</option>
+        <option value="Lima">Lima</option>
+        <option value="Loreto">Loreto</option>
+        <option value="Madre de Dios">Madre de Dios</option>
+        <option value="Moquegua">Moquegua</option>
+        <option value="Pasco">Pasco</option>
+        <option value="Piura">Piura</option>
+        <option value="Puno">Puno</option>
+        <option value="San Martín">San Martín</option>
+        <option value="Tacna">Tacna</option>
+        <option value="Tumbes">Tumbes</option>
+        <option value="Ucayali">Ucayali</option>
+      </select>
+    </div>
 
-		.status {
-			min-height: 24px;
-			font-weight: 600;
-		}
+    <div class="form-group">
+      <label class="required" for="fichaPostulante">Ficha de Postulante (Excel max 10 mb)</label>
+      <input type="file" id="fichaPostulante" name="fichaPostulante" accept=".xlsx,.xls,.xlsm" required>
+    </div>
 
-		.ok { color: var(--ok); }
-		.error { color: var(--error); }
+    <div class="form-group">
+      <label class="required" for="fichaInvencion">Ficha de Invención (Word o PDF max 10 mb)</label>
+      <input type="file" id="fichaInvencion" name="fichaInvencion" accept=".doc,.docx,.pdf" required>
+    </div>
 
-		@media (max-width: 700px) {
-			.grid { grid-template-columns: 1fr; }
-		}
-	</style>
-</head>
-<body>
-	<main class="wrap">
-		<h1>Formulario de Inscripcion</h1>
-		<p>Completa los datos y envia tu registro.</p>
+    <div class="form-group">
+      <label class="required" for="actaCompromiso">Acta de Compromiso (Word o PDF max 10 mb)</label>
+      <input type="file" id="actaCompromiso" name="actaCompromiso" accept=".doc,.docx,.pdf" required>
+    </div>
 
-		<form id="inscripcionForm" novalidate>
-			<section class="grid">
-				<div>
-					<label for="correo">Correo</label>
-					<input id="correo" name="correo" type="email" required />
-				</div>
-				<div>
-					<label for="telefono">Telefono</label>
-					<input id="telefono" name="telefono" type="tel" required />
-				</div>
+    <div class="loader" id="loader">
+      <p>Enviando formulario, por favor espere...</p>
+    </div>
 
-				<div>
-					<label for="nombreRepresentante">Nombres completos</label>
-					<input id="nombreRepresentante" name="nombreRepresentante" type="text" required />
-				</div>
-				<div>
-					<label for="apellidosRepresentante">Apellidos completos</label>
-					<input id="apellidosRepresentante" name="apellidosRepresentante" type="text" required />
-				</div>
+    <button type="submit" class="btn-submit" id="btnSubmit">Enviar Formulario</button>
+  </form>
 
-				<div>
-					<label for="formatoParticipacion">Formato de participacion</label>
-					<select id="formatoParticipacion" name="formatoParticipacion" required>
-						<option value="">Selecciona una opcion</option>
-						<option value="presencial">Presencial</option>
-						<option value="en_linea">En linea</option>
-					</select>
-				</div>
+  <div class="mensaje" id="mensaje"></div>
+</div>
 
-				<div>
-					<label for="enlaceAlVideo">Link del video</label>
-					<input id="enlaceAlVideo" name="enlaceAlVideo" type="url" required />
-				</div>
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-contenido" id="modalContenido">
+    <h2 id="modalTitulo"></h2>
+    <div class="spinner" id="modalSpinner" style="display: none;"></div>
+    <p id="modalMensaje"></p>
+    <p class="hora-envio" id="modalHora"></p>
+    <button class="btn-cerrar" id="btnCerrarModal">Cerrar</button>
+  </div>
+</div>
 
-				<div class="full">
-					<label for="titulo">Titulo</label>
-					<input id="titulo" name="titulo" type="text" required />
-				</div>
+<script>
+(function() {
+  // Variables de seguridad
+  let formularioToken = null;
+  let tiempoInicioFormulario = new Date().getTime();
+  let intentosEnvio = 0;
+  const MAX_INTENTOS = 3;
+  
+  // URL del Web App de Google Apps Script (reemplazar con tu URL)
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAMvMgsOE9tcp4Hz-nYXHKX8kCifUVCrUmDHfetzNsnHoO9sBEHfRGcPgH1R3ECT--9Q/exec';
 
-				<div>
-					<label for="numeroExpediente">Numero de expediente</label>
-					<input id="numeroExpediente" name="numeroExpediente" type="text" />
-				</div>
+  const form = document.getElementById('formConcurso');
+  const mensaje = document.getElementById('mensaje');
+  const loader = document.getElementById('loader');
+  const btnSubmit = document.getElementById('btnSubmit');
+  const tipoParticipante = document.getElementById('tipoParticipante');
+  const grupoNombreInstitucion = document.getElementById('grupoNombreInstitucion');
+  const nombreInstitucionEmpresa = document.getElementById('nombreInstitucionEmpresa');
+  const dniInput = document.getElementById('dni');
+  const telefonoInput = document.getElementById('telefono');
+  const telefonoAltInput = document.getElementById('telefonoAlternativo');
+  
+  // Elementos del modal
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalContenido = document.getElementById('modalContenido');
+  const modalTitulo = document.getElementById('modalTitulo');
+  const modalMensaje = document.getElementById('modalMensaje');
+  const modalHora = document.getElementById('modalHora');
+  const btnCerrarModal = document.getElementById('btnCerrarModal');
+  const modalSpinner = document.getElementById('modalSpinner');
 
-				<div>
-					<label for="compromiso_1">Compromiso 1</label>
-					<input id="compromiso_1" name="compromiso_1" type="text" required />
-				</div>
-				<div>
-					<label for="compromiso_2">Compromiso 2</label>
-					<input id="compromiso_2" name="compromiso_2" type="text" required />
-				</div>
-				<div>
-					<label for="compromiso_3">Compromiso 3</label>
-					<input id="compromiso_3" name="compromiso_3" type="text" required />
-				</div>
+  // Variable para controlar si el envío fue exitoso
+  let envioExitoso = false;
 
-				<div class="full">
-					<label for="descripcionDelInvento">Descripcion del invento</label>
-					<textarea id="descripcionDelInvento" name="descripcionDelInvento" required></textarea>
-				</div>
+  /**
+   * Obtiene un token del servidor (opcional, no crítico)
+   */
+  async function obtenerToken() {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
+      
+      const response = await fetch(`${SCRIPT_URL}?action=getToken`, {
+        method: 'GET',
+        mode: 'cors',
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          formularioToken = data.token;
+          console.log('Token obtenido exitosamente');
+          return true;
+        }
+      }
+    } catch (error) {
+      // Silenciar el error, el token es opcional
+      console.log('Token no disponible, se continuará sin él');
+      return false;
+    }
+    return false;
+  }
 
-				<div>
-					<label for="declaracion">Declaracion</label>
-					<select id="declaracion" name="declaracion">
-						<option value="">Selecciona una opcion</option>
-						<option value="opcion_1">Opcion 1</option>
-						<option value="opcion_2">Opcion 2</option>
-						<option value="opcion_3">Opcion 3</option>
-					</select>
-				</div>
+  /**
+   * Genera un token del lado del cliente como alternativa
+   */
+  function generarTokenCliente() {
+    const timestamp = new Date().getTime();
+    const random = Math.random().toString(36).substring(2);
+    return `client_${timestamp}_${random}`;
+  }
 
-				<div>
-					<label for="formatoInscripcion">Formato de inscripcion</label>
-					<input id="formatoInscripcion" name="formatoInscripcion" type="file" required />
-				</div>
-				<div>
-					<label for="fotografia01">Foto 01</label>
-					<input id="fotografia01" name="fotografia01" type="file" required />
-				</div>
-				<div>
-					<label for="fotografia02">Foto 02</label>
-					<input id="fotografia02" name="fotografia02" type="file" required />
-				</div>
-			</section>
+  /**
+   * Validaciones de seguridad del cliente
+   */
+  function validacionesSeguridad() {
+    const ahora = new Date().getTime();
+    const tiempoTranscurrido = ahora - tiempoInicioFormulario;
+    
+    // Verificar tiempo mínimo
+    if (tiempoTranscurrido < 30000) { // 30 segundos
+      return {
+        valido: false,
+        mensaje: 'Por favor, tómese más tiempo para completar el formulario correctamente.'
+      };
+    }
+    
+    // Verificar intentos de envío
+    if (intentosEnvio >= MAX_INTENTOS) {
+      return {
+        valido: false,
+        mensaje: 'Demasiados intentos de envío. Recargue la página para intentar nuevamente.'
+      };
+    }
+    
+    // Verificar honeypot
+    const honeypot = document.getElementById('honeypot');
+    if (honeypot && honeypot.value !== '') {
+      return {
+        valido: false,
+        mensaje: 'Envío detectado como automatizado.'
+      };
+    }
+    
+    return { valido: true };
+  }
 
-			<button id="submitBtn" type="submit">Enviar formulario</button>
-			<div id="status" class="status" aria-live="polite"></div>
-		</form>
-	</main>
+  /**
+   * Validar tamaño de archivos
+   */
+  function validarTamañoArchivos() {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const archivos = ['fichaPostulante', 'fichaInvencion', 'actaCompromiso'];
+    
+    for (const archivo of archivos) {
+      const input = document.getElementById(archivo);
+      if (input && input.files[0] && input.files[0].size > maxSize) {
+        return {
+          valido: false,
+          mensaje: `El archivo ${archivo} es muy grande. Máximo 10MB permitido.`
+        };
+      }
+    }
+    
+    return { valido: true };
+  }
 
-	<script>
-		const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxcPJ1pvGraBvG3sJkD1Dv7bdWQmrL85XVRk8UtLngBcTiT6Psb3AGfFyuoHNW9U2My/exec';
-		const form = document.getElementById('inscripcionForm');
-		const statusEl = document.getElementById('status');
-		const submitBtn = document.getElementById('submitBtn');
-		const startTime = Date.now();
+  /**
+   * Sanitizar datos de entrada
+   */
+  function sanitizarDatos(datos) {
+    const sanitizado = {};
+    for (const [key, value] of Object.entries(datos)) {
+      if (typeof value === 'string') {
+        // Remover caracteres potencialmente peligrosos
+        sanitizado[key] = value.trim().replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+      } else {
+        sanitizado[key] = value;
+      }
+    }
+    return sanitizado;
+  }
 
-		function setStatus(message, type) {
-			statusEl.textContent = message;
-			statusEl.className = 'status ' + (type || '');
-		}
+  // Función para obtener hora formateada
+  function obtenerHoraActual() {
+    const ahora = new Date();
+    const opciones = { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit',
+      hour12: true 
+    };
+    return ahora.toLocaleDateString('es-PE', opciones);
+  }
 
-		function buildClientToken() {
-			return 'client_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-		}
+  // Mostrar modal de carga
+  function mostrarModalCargando() {
+    modalTitulo.textContent = 'Enviando formulario...';
+    modalContenido.className = 'modal-contenido cargando';
+    modalMensaje.textContent = 'Por favor espere mientras se procesa su solicitud.';
+    modalHora.textContent = '';
+    modalSpinner.style.display = 'block';
+    btnCerrarModal.style.display = 'none';
+    modalOverlay.classList.add('activo');
+  }
 
-		function fileToBase64(file) {
-			return new Promise((resolve, reject) => {
-				if (!file) {
-					resolve('');
-					return;
-				}
-				const reader = new FileReader();
-				reader.onload = () => resolve(String(reader.result || ''));
-				reader.onerror = () => reject(new Error('No se pudo leer el archivo: ' + file.name));
-				reader.readAsDataURL(file);
-			});
-		}
+  // Mostrar modal
+  function mostrarModal(texto, tipo) {
+    modalSpinner.style.display = 'none';
+    btnCerrarModal.style.display = 'block';
+    if (tipo === 'exito') {
+      modalTitulo.textContent = '¡Envío Exitoso!';
+      modalContenido.className = 'modal-contenido exito';
+      envioExitoso = true;
+    } else {
+      modalTitulo.textContent = 'Error';
+      modalContenido.className = 'modal-contenido error';
+      envioExitoso = false;
+    }
+    modalMensaje.textContent = texto;
+    modalHora.textContent = 'Fecha y hora: ' + obtenerHoraActual();
+    modalOverlay.classList.add('activo');
+  }
 
-		async function getFilePayload(inputId, base64Key, nameKey) {
-			const input = document.getElementById(inputId);
-			const file = input.files && input.files[0] ? input.files[0] : null;
-			if (!file) {
-				return { [base64Key]: '', [nameKey]: '' };
-			}
+  // Cerrar modal y recargar página solo si fue exitoso
+  btnCerrarModal.addEventListener('click', function() {
+    modalOverlay.classList.remove('activo');
+    if (envioExitoso) {
+      location.reload();
+    }
+  });
 
-			const base64 = await fileToBase64(file);
-			return {
-				[base64Key]: base64,
-				[nameKey]: file.name
-			};
-		}
+  // Cerrar modal al hacer clic fuera del contenido
+  modalOverlay.addEventListener('click', function(e) {
+    if (e.target === modalOverlay) {
+      modalOverlay.classList.remove('activo');
+      if (envioExitoso) {
+        location.reload();
+      }
+    }
+  });
 
-		form.addEventListener('submit', async (event) => {
-			event.preventDefault();
+  // Validación personalizada para DNI
+  function validarDNI() {
+    const valor = dniInput.value;
+    if (valor.length === 0) {
+      dniInput.setCustomValidity('Este campo es obligatorio');
+    } else if (valor.length !== 8) {
+      dniInput.setCustomValidity('El DNI debe contener exactamente 8 dígitos');
+    } else if (!/^[0-9]{8}$/.test(valor)) {
+      dniInput.setCustomValidity('El DNI solo debe contener números');
+    } else {
+      dniInput.setCustomValidity('');
+    }
+  }
 
-			if (!form.checkValidity()) {
-				form.reportValidity();
-				return;
-			}
+  // Ejecutar validación de DNI en cada cambio
+  dniInput.addEventListener('input', validarDNI);
+  dniInput.addEventListener('blur', validarDNI);
 
-			submitBtn.disabled = true;
-			setStatus('Enviando...', '');
+  // Validación personalizada para teléfono
+  function validarTelefono(input) {
+    const valor = input.value;
+    const soloDigitos = valor.replace(/[^0-9]/g, '');
+    if (valor.length === 0) {
+      input.setCustomValidity('Este campo es obligatorio');
+    } else if (soloDigitos.length < 7) {
+      input.setCustomValidity('El teléfono debe contener al menos 7 dígitos');
+    } else if (!/^[0-9+\-]+$/.test(valor)) {
+      input.setCustomValidity('Solo se permiten números y los símbolos + y -');
+    } else {
+      input.setCustomValidity('');
+    }
+  }
 
-			try {
-				const archivoFormato = await getFilePayload('formatoInscripcion', 'formatoInscripcionBase64', 'formatoInscripcionNombreArchivo');
-				const archivoFoto1 = await getFilePayload('fotografia01', 'fotografia01Base64', 'fotografia01NombreArchivo');
-				const archivoFoto2 = await getFilePayload('fotografia02', 'fotografia02Base64', 'fotografia02NombreArchivo');
+  // Ejecutar validación de teléfonos en cada cambio
+  telefonoInput.addEventListener('input', () => validarTelefono(telefonoInput));
+  telefonoInput.addEventListener('blur', () => validarTelefono(telefonoInput));
+  telefonoAltInput.addEventListener('input', () => validarTelefono(telefonoAltInput));
+  telefonoAltInput.addEventListener('blur', () => validarTelefono(telefonoAltInput));
 
-				const payload = {
-					correo: document.getElementById('correo').value.trim(),
-					nombreRepresentante: document.getElementById('nombreRepresentante').value.trim(),
-					apellidosRepresentante: document.getElementById('apellidosRepresentante').value.trim(),
-					telefono: document.getElementById('telefono').value.trim(),
-					formatoParticipacion: document.getElementById('formatoParticipacion').value,
-					enlaceAlVideo: document.getElementById('enlaceAlVideo').value.trim(),
-					titulo: document.getElementById('titulo').value.trim(),
-					numeroExpediente: document.getElementById('numeroExpediente').value.trim(),
-					descripcionDelInvento: document.getElementById('descripcionDelInvento').value.trim(),
-					declaracion: document.getElementById('declaracion').value,
-					compromiso_1: document.getElementById('compromiso_1').value.trim(),
-					compromiso_2: document.getElementById('compromiso_2').value.trim(),
-					compromiso_3: document.getElementById('compromiso_3').value.trim(),
-					idEnvio: 'env_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-					token: buildClientToken(),
-					tiempoFormulario: Date.now() - startTime,
-					...archivoFormato,
-					...archivoFoto1,
-					...archivoFoto2
-				};
+  // Mostrar/ocultar campo de institución según tipo de participante
+  function actualizarVisibilidadInstitucion() {
+    const valor = tipoParticipante.value;
+    if (valor === 'Empresa' || valor === 'Centros académicos y de investigación') {
+      grupoNombreInstitucion.style.display = 'block';
+      nombreInstitucionEmpresa.required = true;
+    } else {
+      grupoNombreInstitucion.style.display = 'none';
+      nombreInstitucionEmpresa.required = false;
+      nombreInstitucionEmpresa.value = '';
+      nombreInstitucionEmpresa.setCustomValidity('');
+    }
+  }
 
-				const response = await fetch(ENDPOINT, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(payload),
-					mode: 'cors',
-					credentials: 'omit'
-				});
+  // Ejecutar al cargar y cuando cambie la selección
+  tipoParticipante.addEventListener('change', actualizarVisibilidadInstitucion);
+  actualizarVisibilidadInstitucion();
 
-				const data = await response.json();
-				if (!response.ok || data.success === false) {
-					throw new Error(data.message || 'Error al enviar formulario');
-				}
+  // Convertir archivo a Base64
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        resolve({ base64: '', nombre: '' });
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve({ base64: reader.result, nombre: file.name });
+      reader.onerror = error => reject(error);
+    });
+  }
 
-				setStatus('Formulario enviado correctamente.', 'ok');
-				form.reset();
-			} catch (error) {
-				const message = error.message || 'Ocurrio un error al enviar.';
-				if (error.message.includes('CORS') || error.message.includes('fetch')) {
-					setStatus('Error de conexión. Verifica que el servidor esté disponible.', 'error');
-				} else {
-					setStatus(message, 'error');
-				}
-			} finally {
-				submitBtn.disabled = false;
-			}
-		});
-	</script>
-</body>
-</html>
+  // Mostrar mensaje (mantener para compatibilidad, pero usar modal)
+  function mostrarMensaje(texto, tipo) {
+    mostrarModal(texto, tipo);
+  }
+
+  // Obtener token al cargar la página (no bloqueante)
+  window.addEventListener('load', function() {
+    obtenerToken().catch(() => {
+      // Si falla, generar token del cliente
+      formularioToken = generarTokenCliente();
+    });
+  });
+
+  // Detectar cambios sospechosos
+  let contadorCambiosRapidos = 0;
+  form.addEventListener('input', function() {
+    contadorCambiosRapidos++;
+    if (contadorCambiosRapidos > 50) { // Demasiados cambios muy rápidos
+      console.warn('Actividad sospechosa detectada');
+    }
+  });
+
+  /**
+   * Genera un ID único para el envío
+   */
+  function generarIdEnvio() {
+    const timestamp = new Date().getTime();
+    const random = Math.random().toString(36).substring(2, 15);
+    return `envio_${timestamp}_${random}`;
+  }
+
+  /**
+   * Verifica el estado de un envío mediante polling
+   */
+  async function verificarEstadoEnvio(idEnvio, intentos = 0) {
+    const MAX_INTENTOS_VERIFICACION = 20; // 20 intentos = 40 segundos máximo
+    const INTERVALO = 2000; // 2 segundos entre cada intento
+
+    if (intentos >= MAX_INTENTOS_VERIFICACION) {
+      throw new Error('No se pudo verificar el estado del envío. Por favor, contacte al administrador.');
+    }
+
+    try {
+      const response = await fetch(`${SCRIPT_URL}?action=checkStatus&id=${idEnvio}`, {
+        method: 'GET',
+        mode: 'cors'
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al verificar el estado del envío');
+      }
+
+      const resultado = await response.json();
+
+      if (resultado.status === 'pending') {
+        // Aún está procesando, esperar y reintentar
+        await new Promise(resolve => setTimeout(resolve, INTERVALO));
+        return verificarEstadoEnvio(idEnvio, intentos + 1);
+      } else if (resultado.status === 'success') {
+        return { success: true, message: resultado.message };
+      } else if (resultado.status === 'error') {
+        return { success: false, message: resultado.message };
+      } else {
+        // Estado no encontrado, esperar un poco más
+        await new Promise(resolve => setTimeout(resolve, INTERVALO));
+        return verificarEstadoEnvio(idEnvio, intentos + 1);
+      }
+    } catch (error) {
+      // Si hay error en la verificación, esperar y reintentar
+      if (intentos < MAX_INTENTOS_VERIFICACION - 1) {
+        await new Promise(resolve => setTimeout(resolve, INTERVALO));
+        return verificarEstadoEnvio(idEnvio, intentos + 1);
+      }
+      throw error;
+    }
+  }
+
+  // Manejar envío del formulario con seguridad mejorada
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Incrementar contador de intentos
+    intentosEnvio++;
+    
+    // Resetear estado de envío
+    envioExitoso = false;
+    
+    // Validaciones de seguridad
+    const validacionSeguridad = validacionesSeguridad();
+    if (!validacionSeguridad.valido) {
+      mostrarModal(validacionSeguridad.mensaje, 'error');
+      return;
+    }
+    
+    // Validar tamaño de archivos
+    const validacionArchivos = validarTamañoArchivos();
+    if (!validacionArchivos.valido) {
+      mostrarModal(validacionArchivos.mensaje, 'error');
+      return;
+    }
+    
+    // Validar DNI antes de enviar
+    validarDNI();
+    
+    // Validar teléfonos antes de enviar
+    validarTelefono(telefonoInput);
+    validarTelefono(telefonoAltInput);
+    
+    // Agregar clase para mostrar validación
+    form.parentElement.classList.add('was-validated');
+    
+    // Verificar validez del formulario
+    if (!form.checkValidity()) {
+      // Encontrar el primer elemento inválido y hacer focus
+      const primerInvalido = form.querySelector(':invalid');
+      if (primerInvalido) {
+        primerInvalido.focus();
+        primerInvalido.reportValidity();
+      }
+      return;
+    }
+
+    // Si no hay token, generar uno del cliente
+    if (!formularioToken) {
+      formularioToken = generarTokenCliente();
+    }
+
+    btnSubmit.disabled = true;
+    mostrarModalCargando();
+
+    try {
+      // Obtener archivos
+      const fichaPostulanteFile = document.getElementById('fichaPostulante').files[0];
+      const fichaInvencionFile = document.getElementById('fichaInvencion').files[0];
+      const actaCompromisoFile = document.getElementById('actaCompromiso').files[0];
+
+      // Validar que los archivos existan
+      if (!fichaPostulanteFile || !fichaInvencionFile || !actaCompromisoFile) {
+        throw new Error('Por favor, seleccione todos los archivos requeridos.');
+      }
+
+      // Convertir archivos a Base64
+      const [fichaPostulante, fichaInvencion, actaCompromiso] = await Promise.all([
+        fileToBase64(fichaPostulanteFile),
+        fileToBase64(fichaInvencionFile),
+        fileToBase64(actaCompromisoFile)
+      ]);
+
+      // Función auxiliar para agregar apellido al nombre del archivo
+      function agregarApellidoAlNombre(nombreArchivo, apellido) {
+        const ultimoPunto = nombreArchivo.lastIndexOf('.');
+        const ahora = new Date();
+        const fecha = ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+        const hora = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false }).replace(/:/g, '-');
+        const fechaHora = fecha + ' ' + hora;
+        if (ultimoPunto === -1) {
+          return nombreArchivo + ' ' + apellido + ' ' + fechaHora;
+        }
+        const nombre = nombreArchivo.substring(0, ultimoPunto);
+        const extension = nombreArchivo.substring(ultimoPunto);
+        return nombre + ' ' + apellido + ' ' + fechaHora + extension;
+      }
+
+      const apellidoRep = document.getElementById('apellidosRepresentante').value;
+      const tipoParticipanteValor = document.getElementById('tipoParticipante').value;
+
+      // Generar ID único para este envío
+      const idEnvio = generarIdEnvio();
+
+      // Construir objeto de datos
+      let datos = {
+        idEnvio: idEnvio,
+        tipoParticipante: tipoParticipanteValor,
+        nombreInstitucionEmpresa: tipoParticipanteValor === 'Diseñador Independiente' ? '-' : document.getElementById('nombreInstitucionEmpresa').value,
+        titulo: document.getElementById('titulo').value,
+        sectorTecnologico: document.getElementById('sectorTecnologico').value,
+        apellidosRepresentante: document.getElementById('apellidosRepresentante').value,
+        nombreRepresentante: document.getElementById('nombreRepresentante').value,
+        dni: document.getElementById('dni').value,
+        telefono: document.getElementById('telefono').value,
+        telefonoAlternativo: document.getElementById('telefonoAlternativo').value,
+        correo: document.getElementById('correo').value,
+        correoAlternativo: document.getElementById('correoAlternativo').value,
+        region: document.getElementById('region').value,
+        fichaPostulanteBase64: fichaPostulante.base64,
+        fichaPostulanteNombreArchivo: agregarApellidoAlNombre(fichaPostulante.nombre, apellidoRep),
+        fichaInvencionBase64: fichaInvencion.base64,
+        fichaInvencionNombreArchivo: agregarApellidoAlNombre(fichaInvencion.nombre, apellidoRep),
+        actaCompromisoBase64: actaCompromiso.base64,
+        actaCompromisoNombreArchivo: agregarApellidoAlNombre(actaCompromiso.nombre, apellidoRep),
+        // Campos de seguridad
+        honeypot: document.getElementById('honeypot').value,
+        token: formularioToken,
+        tiempoFormulario: new Date().getTime() - tiempoInicioFormulario
+      };
+
+      // Sanitizar datos
+      datos = sanitizarDatos(datos);
+
+      // Enviar datos al Apps Script usando no-cors
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datos)
+      }).catch(error => {
+        console.log('Fetch iniciado (no-cors):', error);
+      });
+
+      // Esperar un momento antes de verificar
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Verificar el estado del envío mediante polling
+      const resultado = await verificarEstadoEnvio(idEnvio);
+
+      if (resultado.success) {
+        // Remover clase de validación antes de mostrar éxito
+        form.parentElement.classList.remove('was-validated');
+        
+        mostrarMensaje('¡Formulario enviado exitosamente! Gracias por su participación.', 'exito');
+        form.reset();
+        
+        // Resetear variables de seguridad
+        tiempoInicioFormulario = new Date().getTime();
+        intentosEnvio = 0;
+        // Generar nuevo token para próximo envío
+        formularioToken = generarTokenCliente();
+      } else {
+        throw new Error(resultado.message || 'Error al procesar el formulario');
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      mostrarMensaje('Error al enviar el formulario: ' + error.message, 'error');
+      btnSubmit.disabled = false;
+    }
+  });
+})();
+
+</script>
