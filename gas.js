@@ -354,7 +354,11 @@ function doPost(e) {
  */
 function doOptions(e) {
   return ContentService.createTextOutput('OK')
-    .setMimeType(ContentService.MimeType.TEXT);
+    .setMimeType(ContentService.MimeType.TEXT)
+    .addHeader('Access-Control-Allow-Origin', '*')
+    .addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+    .addHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    .addHeader('Access-Control-Max-Age', '3600');
 }
 
 /**
@@ -402,13 +406,12 @@ function doGet(e) {
  */
 function createResponseWithCORS(data) {
   const output = ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
-  
-  // Google Apps Script maneja CORS automáticamente cuando está publicado correctamente
-  // como Web App con permisos públicos. Sin embargo, es importante que:
-  // 1. El proyecto esté publicado como "Execute as" el propietario
-  // 2. Permisos sean "Anyone" o "Anyone, even anonymous"
-  // 3. El endpoint sea accesible públicamente
+    .setMimeType(ContentService.MimeType.JSON)
+    .addHeader('Access-Control-Allow-Origin', '*')
+    .addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+    .addHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    .addHeader('Access-Control-Max-Age', '3600')
+    .addHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   
   return output;
 }
