@@ -350,15 +350,21 @@ function doPost(e) {
 
 /**
  * Maneja peticiones OPTIONS (preflight CORS)
- * Google Apps Script maneja CORS automáticamente para Web Apps públicos
+ * Responde con los headers CORS necesarios para que el navegador permita la petición
  */
 function doOptions(e) {
-  return ContentService.createTextOutput('OK')
-    .setMimeType(ContentService.MimeType.TEXT)
-    .addHeader('Access-Control-Allow-Origin', '*')
-    .addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-    .addHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-    .addHeader('Access-Control-Max-Age', '3600');
+  const output = ContentService.createTextOutput('')
+    .setMimeType(ContentService.MimeType.TEXT);
+  
+  // Agregar todos los headers CORS requeridos para preflight
+  output.addHeader('Access-Control-Allow-Origin', '*');
+  output.addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, HEAD, PUT, DELETE, PATCH');
+  output.addHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  output.addHeader('Access-Control-Max-Age', '86400');
+  output.addHeader('Access-Control-Expose-Headers', 'Content-Length, X-JSON-Response');
+  output.addHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  
+  return output;
 }
 
 /**
@@ -406,12 +412,17 @@ function doGet(e) {
  */
 function createResponseWithCORS(data) {
   const output = ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON)
-    .addHeader('Access-Control-Allow-Origin', '*')
-    .addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-    .addHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-    .addHeader('Access-Control-Max-Age', '3600')
-    .addHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    .setMimeType(ContentService.MimeType.JSON);
+  
+  // Agregar todos los headers CORS necesarios
+  output.addHeader('Access-Control-Allow-Origin', '*');
+  output.addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, HEAD, PUT, DELETE, PATCH');
+  output.addHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  output.addHeader('Access-Control-Max-Age', '86400');
+  output.addHeader('Access-Control-Expose-Headers', 'Content-Length, X-JSON-Response');
+  output.addHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  output.addHeader('Pragma', 'no-cache');
+  output.addHeader('Expires', '0');
   
   return output;
 }
@@ -419,7 +430,7 @@ function createResponseWithCORS(data) {
 /**
  * Crea una respuesta JSON con headers apropiados (mantiene compatibilidad)
  * @param {Object} data - Datos a retornar
- * @return {TextOutput} Respuesta formateada
+ * @return {TextOutput} Respuesta formateada con headers CORS
  */
 function createResponse(data) {
   return createResponseWithCORS(data);
