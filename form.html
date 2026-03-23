@@ -294,7 +294,9 @@
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify(payload)
+					body: JSON.stringify(payload),
+					mode: 'cors',
+					credentials: 'omit'
 				});
 
 				const data = await response.json();
@@ -305,7 +307,12 @@
 				setStatus('Formulario enviado correctamente.', 'ok');
 				form.reset();
 			} catch (error) {
-				setStatus(error.message || 'Ocurrio un error al enviar.', 'error');
+				const message = error.message || 'Ocurrio un error al enviar.';
+				if (error.message.includes('CORS') || error.message.includes('fetch')) {
+					setStatus('Error de conexión. Verifica que el servidor esté disponible.', 'error');
+				} else {
+					setStatus(message, 'error');
+				}
 			} finally {
 				submitBtn.disabled = false;
 			}

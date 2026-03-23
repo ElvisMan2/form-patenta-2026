@@ -341,6 +341,16 @@ function doPost(e) {
 }
 
 /**
+ * Maneja peticiones OPTIONS (preflight CORS)
+ */
+function doOptions(e) {
+  return createResponseWithCORS({
+    success: true,
+    message: 'CORS preflight OK'
+  });
+}
+
+/**
  * Maneja peticiones GET para generar tokens y verificar estados
  */
 function doGet(e) {
@@ -387,8 +397,11 @@ function createResponseWithCORS(data) {
   const output = ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
   
-  // Nota: Apps Script maneja CORS automáticamente cuando el proyecto está publicado como Web App
-  // con acceso "Cualquier persona" o "Cualquier persona, incluso anónimos"
+  // Google Apps Script maneja CORS automáticamente cuando está publicado correctamente
+  // como Web App con permisos públicos. Sin embargo, es importante que:
+  // 1. El proyecto esté publicado como "Execute as" el propietario
+  // 2. Permisos sean "Anyone" o "Anyone, even anonymous"
+  // 3. El endpoint sea accesible públicamente
   
   return output;
 }
