@@ -181,11 +181,6 @@
     </div>
 
     <div class="form-group">
-      <label class="required" for="titulo">Título del Proyecto</label>
-      <input type="text" id="titulo" name="titulo" required>
-    </div>
-
-    <div class="form-group">
       <label class="required" for="apellidosRepresentante">Apellidos del Representante</label>
       <input type="text" id="apellidosRepresentante" name="apellidosRepresentante" required>
     </div>
@@ -221,6 +216,15 @@
              required>
     </div>
 
+    <div class="form-group">
+      <label class="required" for="formaParticipacion">Forma de participación</label>
+      <select id="formaParticipacion" name="formaParticipacion" required>
+        <option value="">Seleccione...</option>
+        <option value="Participación presencial">Participación presencial</option>
+        <option value="Participación en linea">Participación en linea</option>
+      </select>
+    </div>
+
 
     <div class="form-group">
       <label class="required" for="fichaPostulante">Formato de inscripcion (Excel max 10 mb)</label>
@@ -235,6 +239,45 @@
     <div class="form-group">
       <label class="required" for="actaCompromiso">Fotografia_02 (Imagen max 10 mb)</label>
       <input type="file" id="actaCompromiso" name="actaCompromiso" accept=".jpg,.jpeg,.png,.webp" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required" for="videoInvento">video del invento</label>
+      <input type="url" id="videoInvento" name="videoInvento"
+             placeholder="https://www.youtube.com/watch?v=..."
+             title="Ingrese un enlace valido de YouTube o similar"
+             required>
+    </div>
+
+    <div class="form-group">
+      <label class="required" for="titulo">Título del Proyecto</label>
+      <input type="text" id="titulo" name="titulo" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required" for="expediente">expediente</label>
+      <input type="text" id="expediente" name="expediente" maxlength="100" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required" for="descripcion">descripción</label>
+      <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="required">Declaro que acepto conocer que la participación en la KIWIE 2026, como parte de la delegación peruana, implica los siguientes puntos, marque en señal de aceptación y entendimiento que debe:</label>
+      <div style="margin-bottom: 10px;">
+        <input type="checkbox" id="declaracion1" name="declaracion1" required>
+        <label for="declaracion1" style="display: inline; font-weight: normal;">Obligatoriamente: Pagar la tarifa de participación, que asciende a $100 + ITF ($60) o $400 + ITF ($240), según el tipo de solicitud, junto con la delegación (costo compartido entre 3 personas), y de corresponder las tasas correspondientes a la delegación física.</label>
+      </div>
+      <div style="margin-bottom: 10px;">
+        <input type="checkbox" id="declaracion2" name="declaracion2" required>
+        <label for="declaracion2" style="display: inline; font-weight: normal;">Obligatoriamente: Realizar un video explicativo, en inglés o subtitulado en inglés de máximo 2 minutos, hasta el 02 de abril de 2025, en caso no se haya adjuntado al momento de la presente inscripción.</label>
+      </div>
+      <div>
+        <input type="checkbox" id="declaracion3" name="declaracion3" required>
+        <label for="declaracion3" style="display: inline; font-weight: normal;">Al completar el formulario de inscripción, el participante acepta que sus datos personales serán utilizados únicamente con fines de contacto y coordinación de asuntos relativos a la conformación de la delegación y puede revocar este consentimiento escribiendo a patenta@indecopi.gob.pe</label>
+      </div>
     </div>
 
     <div class="loader" id="loader">
@@ -267,7 +310,7 @@
   const MAX_INTENTOS = 3;
   
   // URL del Web App de Google Apps Script (reemplazar con tu URL)
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbweohEEsZUexnYs5K3IVfsMHz9AFHXM-7WnxP2Y-IK3j9InLS6oJmoPhCdeSKwcY9vu/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8RpL5uEkdoXeGehbSLFvsRuhbLf6Mj5-Gz6MvQnIk7mT96fGdkLNhaLIP0Yz14MLv/exec';
 
   const form = document.getElementById('formConcurso');
   const mensaje = document.getElementById('mensaje');
@@ -690,12 +733,19 @@
         dni: document.getElementById('dni').value,
         telefono: document.getElementById('telefono').value,
         correo: document.getElementById('correo').value,
+        formaParticipacion: document.getElementById('formaParticipacion').value,
         fichaPostulanteBase64: fichaPostulante.base64,
         fichaPostulanteNombreArchivo: agregarApellidoAlNombre(fichaPostulante.nombre, apellidoRep),
         fichaInvencionBase64: fichaInvencion.base64,
         fichaInvencionNombreArchivo: agregarApellidoAlNombre(fichaInvencion.nombre, apellidoRep),
         actaCompromisoBase64: actaCompromiso.base64,
         actaCompromisoNombreArchivo: agregarApellidoAlNombre(actaCompromiso.nombre, apellidoRep),
+        videoInvento: document.getElementById('videoInvento').value.trim(),
+        expediente: document.getElementById('expediente').value.trim(),
+        descripcion: document.getElementById('descripcion').value.trim(),
+        declaracion1: document.getElementById('declaracion1').checked,
+        declaracion2: document.getElementById('declaracion2').checked,
+        declaracion3: document.getElementById('declaracion3').checked,
         // Campos de seguridad
         honeypot: document.getElementById('honeypot').value,
         token: formularioToken,

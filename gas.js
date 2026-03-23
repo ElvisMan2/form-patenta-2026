@@ -29,7 +29,7 @@ function subirArchivo(fileName, archivoBase64, folderId) {
  * ID de la hoja: 
  * Hoja: Registros
  */
-const SPREADSHEET_ID = '1-3CPyXQ-8QB0T4pzKLJMZ5eiO33AmV22Dr1bQJu6wkY';
+const SPREADSHEET_ID = '1UFaDuJZzJByfZde5gNCeM3OaqpeSQ_2uykFjYr4yRYY';
 const SHEET_NAME = 'Respuestas';
 const FOLDER_ID = '1QjPLqJnKxA6VrMASnOTUieDFeIH0uoAo';//foto1
 const FOLDER_ID_FICHA_DIS = '13cBtzviuG9bcBJVfFAAU-4gTaCeXTDLa';//foto2
@@ -110,7 +110,7 @@ function guardarDatos(datos) {
     // Crear array con los datos
     const fila = [
       fecha,
-      '',
+      datos.formaParticipacion || '',
       datos.nombreInstitucionEmpresa,
       datos.titulo,
       '',
@@ -124,7 +124,13 @@ function guardarDatos(datos) {
       '',
       fichaPostulanteUrl,
       fichaInvencionUrl,
-      actaCompromisoUrl
+      actaCompromisoUrl,
+      datos.videoInvento || '',
+      datos.expediente || '',
+      datos.descripcion || '',
+      datos.declaracion1 === true ? 'Si' : 'No',
+      datos.declaracion2 === true ? 'Si' : 'No',
+      datos.declaracion3 === true ? 'Si' : 'No'
     ];
     
     // Agregar nueva fila al final
@@ -150,7 +156,7 @@ function guardarDatos(datos) {
 const SECURITY_CONFIG = {
   MAX_REQUESTS_PER_IP: 10, // máximo 10 envíos por IP por hora
   MAX_REQUESTS_PER_EMAIL: 10, // máximo 10 envíos por email por día
-  MIN_FORM_TIME: 30, // mínimo 30 segundos para completar el formulario
+  MIN_FORM_TIME: 15, // mínimo 15 segundos para completar el formulario
   MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB máximo por archivo
   ALLOWED_ORIGINS: ['https://www.patenta.pe'],
   TOKEN_VALIDITY: 1800000 // 30 minutos en millisegundos
@@ -273,7 +279,8 @@ function validarDatos(datos) {
   const camposRequeridos = [
     'titulo',
     'apellidosRepresentante', 'nombreRepresentante', 'dni', 
-    'telefono', 'correo'
+    'telefono', 'correo', 'formaParticipacion', 'videoInvento',
+    'expediente', 'descripcion'
   ];
   
   // Verificar campos requeridos
@@ -298,6 +305,32 @@ function validarDatos(datos) {
   const telefonoRegex = /^[0-9+\-]{7,15}$/;
   if (!telefonoRegex.test(datos.telefono)) {
     return { valido: false, error: 'Teléfono inválido' };
+  }
+
+  // Validar forma de participación
+  const formasPermitidas = ['Participación presencial', 'Participación en linea'];
+  if (!formasPermitidas.includes(datos.formaParticipacion)) {
+    return { valido: false, error: 'Forma de participación inválida' };
+  }
+
+  // Validar enlace de video
+  const urlRegex = /^https?:\/\/.+/i;
+  if (!urlRegex.test(datos.videoInvento)) {
+    return { valido: false, error: 'Enlace de video inválido' };
+  }
+
+  // Validar campos de texto adicionales
+  if (datos.expediente.length > 100) {
+    return { valido: false, error: 'Expediente excede el límite de caracteres' };
+  }
+
+  if (datos.descripcion.length < 10) {
+    return { valido: false, error: 'Descripción demasiado corta' };
+  }
+
+  // Validar declaraciones obligatorias
+  if (datos.declaracion1 !== true || datos.declaracion2 !== true || datos.declaracion3 !== true) {
+    return { valido: false, error: 'Debe aceptar las tres declaraciones obligatorias' };
   }
   
   // Verificar honeypot
