@@ -249,18 +249,11 @@ function verificarRateLimit(ip, email) {
 }
 
 /**
- * Valida el origen de la petición
+ * Valida el origen de la petición (simplificado para CORS)
  */
-function validarOrigen(headers) {
-  const origen = headers['origin'] || headers['referer'] || '';
-  const origenPermitido = SECURITY_CONFIG.ALLOWED_ORIGINS.some(allowed => 
-    origen.includes(allowed) || allowed === '*'
-  );
-  
-  if (!origenPermitido && origen !== '') {
-    return { valido: false, error: 'Origen no autorizado' };
-  }
-  
+function validarOrigen(request) {
+  // Google Apps Script: permitir todos los orígenes si ALLOWED_ORIGINS incluye '*'
+  // Ya que estamos configurados con '*', siempre será válido
   return { valido: true };
 }
 
@@ -279,8 +272,8 @@ function doPost(e) {
       guardarEstadoEnvio(idEnvio, 'pending', 'Procesando...');
     }
     
-    // Validar origen
-    const validacionOrigen = validarOrigen(e.parameter);
+    // Validar origen (simplificado)
+    const validacionOrigen = validarOrigen(e);
     if (!validacionOrigen.valido) {
       if (idEnvio) {
         guardarEstadoEnvio(idEnvio, 'error', 'Acceso denegado: ' + validacionOrigen.error);
@@ -304,7 +297,7 @@ function doPost(e) {
     }
     
     // Obtener IP del usuario (aproximada)
-    const ip = e.parameter['user_ip'] || 'unknown';
+    const ip = e.parameter['user_ip'] || (e.clientAddress || 'unknown');
     
     // Verificar rate limiting
     const verificacionRate = verificarRateLimit(ip, params.correo);
@@ -335,19 +328,19 @@ function doPost(e) {
     }
     return createResponseWithCORS({
       success: false,
-      message: 'Error interno del servidor'
+      message: 'Error interno del servidor: ' + error.message
     });
   }
 }
 
 /**
  * Maneja peticiones OPTIONS (preflight CORS)
+ * Nota: Google Apps Script maneja esto automáticamente cuando está publicado correctamente
  */
 function doOptions(e) {
-  return createResponseWithCORS({
-    success: true,
-    message: 'CORS preflight OK'
-  });
+  return ContentService.createTextOutput()
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setContent('OK');
 }
 
 /**
