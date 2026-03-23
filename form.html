@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Formulario de Inscripcion</title>
+	<style>
+		:root {
+			--bg: #f5f7fb;
+			--panel: #ffffff;
+			--text: #1f2937;
+			--muted: #6b7280;
+			--brand: #0f766e;
+			--brand-2: #115e59;
+			--border: #d1d5db;
+			--ok: #065f46;
+			--error: #991b1b;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			margin: 0;
+			font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+			background: radial-gradient(circle at top right, #e6fffa 0%, var(--bg) 40%);
+			color: var(--text);
+			padding: 24px;
+		}
+
+		.wrap {
+			max-width: 840px;
+			margin: 0 auto;
+			background: var(--panel);
+			border: 1px solid var(--border);
+			border-radius: 14px;
+			padding: 22px;
+			box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+		}
+
+		h1 {
+			margin: 0 0 8px;
+			font-size: 1.5rem;
+		}
+
+		p {
+			margin: 0 0 18px;
+			color: var(--muted);
+		}
+
+		form {
+			display: grid;
+			gap: 14px;
+		}
+
+		.grid {
+			display: grid;
+			gap: 12px;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.full { grid-column: 1 / -1; }
+
+		label {
+			display: block;
+			font-weight: 600;
+			margin-bottom: 6px;
+			font-size: 0.94rem;
+		}
+
+		input,
+		textarea,
+		select {
+			width: 100%;
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			padding: 10px 12px;
+			font: inherit;
+			color: inherit;
+			background: #fff;
+		}
+
+		textarea {
+			min-height: 120px;
+			resize: vertical;
+		}
+
+		button {
+			border: 0;
+			border-radius: 10px;
+			padding: 11px 16px;
+			font: inherit;
+			font-weight: 700;
+			background: var(--brand);
+			color: white;
+			cursor: pointer;
+			width: fit-content;
+		}
+
+		button:hover { background: var(--brand-2); }
+		button:disabled { opacity: 0.7; cursor: wait; }
+
+		.status {
+			min-height: 24px;
+			font-weight: 600;
+		}
+
+		.ok { color: var(--ok); }
+		.error { color: var(--error); }
+
+		@media (max-width: 700px) {
+			.grid { grid-template-columns: 1fr; }
+		}
+	</style>
+</head>
+<body>
+	<main class="wrap">
+		<h1>Formulario de Inscripcion</h1>
+		<p>Completa los datos y envia tu registro.</p>
+
+		<form id="inscripcionForm" novalidate>
+			<section class="grid">
+				<div>
+					<label for="correo">Correo</label>
+					<input id="correo" name="correo" type="email" required />
+				</div>
+				<div>
+					<label for="telefono">Telefono</label>
+					<input id="telefono" name="telefono" type="tel" required />
+				</div>
+
+				<div>
+					<label for="nombreRepresentante">Nombres completos</label>
+					<input id="nombreRepresentante" name="nombreRepresentante" type="text" required />
+				</div>
+				<div>
+					<label for="apellidosRepresentante">Apellidos completos</label>
+					<input id="apellidosRepresentante" name="apellidosRepresentante" type="text" required />
+				</div>
+
+				<div>
+					<label for="formatoParticipacion">Formato de participacion</label>
+					<select id="formatoParticipacion" name="formatoParticipacion" required>
+						<option value="">Selecciona una opcion</option>
+						<option value="presencial">Presencial</option>
+						<option value="en_linea">En linea</option>
+					</select>
+				</div>
+
+				<div>
+					<label for="enlaceAlVideo">Link del video</label>
+					<input id="enlaceAlVideo" name="enlaceAlVideo" type="url" required />
+				</div>
+
+				<div class="full">
+					<label for="titulo">Titulo</label>
+					<input id="titulo" name="titulo" type="text" required />
+				</div>
+
+				<div>
+					<label for="numeroExpediente">Numero de expediente</label>
+					<input id="numeroExpediente" name="numeroExpediente" type="text" />
+				</div>
+
+				<div>
+					<label for="compromiso_1">Compromiso 1</label>
+					<input id="compromiso_1" name="compromiso_1" type="text" required />
+				</div>
+				<div>
+					<label for="compromiso_2">Compromiso 2</label>
+					<input id="compromiso_2" name="compromiso_2" type="text" required />
+				</div>
+				<div>
+					<label for="compromiso_3">Compromiso 3</label>
+					<input id="compromiso_3" name="compromiso_3" type="text" required />
+				</div>
+
+				<div class="full">
+					<label for="descripcionDelInvento">Descripcion del invento</label>
+					<textarea id="descripcionDelInvento" name="descripcionDelInvento" required></textarea>
+				</div>
+
+				<div>
+					<label for="declaracion">Declaracion</label>
+					<select id="declaracion" name="declaracion">
+						<option value="">Selecciona una opcion</option>
+						<option value="opcion_1">Opcion 1</option>
+						<option value="opcion_2">Opcion 2</option>
+						<option value="opcion_3">Opcion 3</option>
+					</select>
+				</div>
+
+				<div>
+					<label for="formatoInscripcion">Formato de inscripcion</label>
+					<input id="formatoInscripcion" name="formatoInscripcion" type="file" required />
+				</div>
+				<div>
+					<label for="fotografia01">Foto 01</label>
+					<input id="fotografia01" name="fotografia01" type="file" required />
+				</div>
+				<div>
+					<label for="fotografia02">Foto 02</label>
+					<input id="fotografia02" name="fotografia02" type="file" required />
+				</div>
+			</section>
+
+			<button id="submitBtn" type="submit">Enviar formulario</button>
+			<div id="status" class="status" aria-live="polite"></div>
+		</form>
+	</main>
+
+	<script>
+		const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzjvQYAL1NNv5xwY1Nk3USYBHphCMl-FgDZhZmFbUvxBfKtwEGzMBfUnYIf-KtcWE2P/exec';
+		const form = document.getElementById('inscripcionForm');
+		const statusEl = document.getElementById('status');
+		const submitBtn = document.getElementById('submitBtn');
+		const startTime = Date.now();
+
+		function setStatus(message, type) {
+			statusEl.textContent = message;
+			statusEl.className = 'status ' + (type || '');
+		}
+
+		function buildClientToken() {
+			return 'client_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+		}
+
+		function fileToBase64(file) {
+			return new Promise((resolve, reject) => {
+				if (!file) {
+					resolve('');
+					return;
+				}
+				const reader = new FileReader();
+				reader.onload = () => resolve(String(reader.result || ''));
+				reader.onerror = () => reject(new Error('No se pudo leer el archivo: ' + file.name));
+				reader.readAsDataURL(file);
+			});
+		}
+
+		async function getFilePayload(inputId, base64Key, nameKey) {
+			const input = document.getElementById(inputId);
+			const file = input.files && input.files[0] ? input.files[0] : null;
+			if (!file) {
+				return { [base64Key]: '', [nameKey]: '' };
+			}
+
+			const base64 = await fileToBase64(file);
+			return {
+				[base64Key]: base64,
+				[nameKey]: file.name
+			};
+		}
+
+		form.addEventListener('submit', async (event) => {
+			event.preventDefault();
+
+			if (!form.checkValidity()) {
+				form.reportValidity();
+				return;
+			}
+
+			submitBtn.disabled = true;
+			setStatus('Enviando...', '');
+
+			try {
+				const archivoFormato = await getFilePayload('formatoInscripcion', 'formatoInscripcionBase64', 'formatoInscripcionNombreArchivo');
+				const archivoFoto1 = await getFilePayload('fotografia01', 'fotografia01Base64', 'fotografia01NombreArchivo');
+				const archivoFoto2 = await getFilePayload('fotografia02', 'fotografia02Base64', 'fotografia02NombreArchivo');
+
+				const payload = {
+					correo: document.getElementById('correo').value.trim(),
+					nombreRepresentante: document.getElementById('nombreRepresentante').value.trim(),
+					apellidosRepresentante: document.getElementById('apellidosRepresentante').value.trim(),
+					telefono: document.getElementById('telefono').value.trim(),
+					formatoParticipacion: document.getElementById('formatoParticipacion').value,
+					enlaceAlVideo: document.getElementById('enlaceAlVideo').value.trim(),
+					titulo: document.getElementById('titulo').value.trim(),
+					numeroExpediente: document.getElementById('numeroExpediente').value.trim(),
+					descripcionDelInvento: document.getElementById('descripcionDelInvento').value.trim(),
+					declaracion: document.getElementById('declaracion').value,
+					compromiso_1: document.getElementById('compromiso_1').value.trim(),
+					compromiso_2: document.getElementById('compromiso_2').value.trim(),
+					compromiso_3: document.getElementById('compromiso_3').value.trim(),
+					idEnvio: 'env_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+					token: buildClientToken(),
+					tiempoFormulario: Date.now() - startTime,
+					...archivoFormato,
+					...archivoFoto1,
+					...archivoFoto2
+				};
+
+				const response = await fetch(ENDPOINT, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(payload)
+				});
+
+				const data = await response.json();
+				if (!response.ok || data.success === false) {
+					throw new Error(data.message || 'Error al enviar formulario');
+				}
+
+				setStatus('Formulario enviado correctamente.', 'ok');
+				form.reset();
+			} catch (error) {
+				setStatus(error.message || 'Ocurrio un error al enviar.', 'error');
+			} finally {
+				submitBtn.disabled = false;
+			}
+		});
+	</script>
+</body>
+</html>
