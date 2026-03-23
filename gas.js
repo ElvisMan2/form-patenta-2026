@@ -110,18 +110,18 @@ function guardarDatos(datos) {
     // Crear array con los datos
     const fila = [
       fecha,
-      datos.tipoParticipante,
+      '',
       datos.nombreInstitucionEmpresa,
       datos.titulo,
-      datos.sectorTecnologico,
+      '',
       datos.apellidosRepresentante,
       datos.nombreRepresentante,
       datos.dni,
       datos.telefono,
-      datos.telefonoAlternativo,
+      '',
       datos.correo,
-      datos.correoAlternativo,
-      datos.region,
+      '',
+      '',
       fichaPostulanteUrl,
       fichaInvencionUrl,
       actaCompromisoUrl
@@ -271,9 +271,9 @@ function validarOrigen(headers) {
  */
 function validarDatos(datos) {
   const camposRequeridos = [
-    'tipoParticipante', 'titulo', 'sectorTecnologico', 
+    'titulo',
     'apellidosRepresentante', 'nombreRepresentante', 'dni', 
-    'telefono', 'telefonoAlternativo', 'correo', 'correoAlternativo', 'region'
+    'telefono', 'correo'
   ];
   
   // Verificar campos requeridos
@@ -290,13 +290,13 @@ function validarDatos(datos) {
   
   // Validar emails
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(datos.correo) || !emailRegex.test(datos.correoAlternativo)) {
+  if (!emailRegex.test(datos.correo)) {
     return { valido: false, error: 'Email inválido' };
   }
   
   // Validar teléfonos
   const telefonoRegex = /^[0-9+\-]{7,15}$/;
-  if (!telefonoRegex.test(datos.telefono) || !telefonoRegex.test(datos.telefonoAlternativo)) {
+  if (!telefonoRegex.test(datos.telefono)) {
     return { valido: false, error: 'Teléfono inválido' };
   }
   

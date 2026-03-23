@@ -181,38 +181,8 @@
     </div>
 
     <div class="form-group">
-      <label class="required" for="tipoParticipante">Tipo de Participante</label>
-      <select id="tipoParticipante" name="tipoParticipante" required>
-        <option value="">Seleccione...</option>
-        <option value="Diseñador Independiente">Diseñador Independiente</option>
-        <option value="Empresa">Empresa</option>
-        <option value="Centros académicos y de investigación">Centros académicos y de investigación</option>
-      </select>
-    </div>
-
-    <div class="form-group" id="grupoNombreInstitucion" style="display: none;">
-      <label class="required" for="nombreInstitucionEmpresa">Nombre de Institución / Empresa</label>
-      <input type="text" id="nombreInstitucionEmpresa" name="nombreInstitucionEmpresa">
-    </div>
-
-    <div class="form-group">
       <label class="required" for="titulo">Título del Proyecto</label>
       <input type="text" id="titulo" name="titulo" required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="sectorTecnologico">Sector Tecnológico</label>
-      <select id="sectorTecnologico" name="sectorTecnologico" required>
-        <option value="">Seleccione...</option>
-        <option value="Agropecuario y agroindustria">Agropecuario y agroindustria</option>
-        <option value="Vivienda y saneamiento">Vivienda y saneamiento</option>
-        <option value="Energia y transporte">Energía y transporte</option>
-        <option value="Biotecnologia y medicina">Biotecnología y medicina</option>
-        <option value="Mineria y metalurgia">Minería y metalurgia</option>
-        <option value="Medio ambiente">Medio ambiente</option>
-        <option value="Telecomunicaciones y electronica">Telecomunicaciones y electrónica</option>
-        <option value="Utilitarios y otros">Utilitarios y otros</option>
-      </select>
     </div>
 
     <div class="form-group">
@@ -244,15 +214,6 @@
     </div>
 
     <div class="form-group">
-      <label class="required" for="telefonoAlternativo">Teléfono Alternativo</label>
-      <input type="tel" id="telefonoAlternativo" name="telefonoAlternativo" 
-             pattern="[0-9+\-]{7,15}"
-             title="El teléfono debe contener al menos 7 dígitos"
-             oninput="this.value = this.value.replace(/[^0-9+\-]/g, '')"
-             required>
-    </div>
-
-    <div class="form-group">
       <label class="required" for="correo">Correo Electrónico</label>
       <input type="email" id="correo" name="correo" 
              pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
@@ -260,59 +221,20 @@
              required>
     </div>
 
-    <div class="form-group">
-      <label class="required" for="correoAlternativo">Correo Alternativo</label>
-      <input type="email" id="correoAlternativo" name="correoAlternativo" 
-             pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
-             title="Ingrese un correo electrónico válido (ejemplo: usuario@dominio.com)"
-             required>
-    </div>
 
     <div class="form-group">
-      <label class="required" for="region">Región</label>
-      <select id="region" name="region" required>
-        <option value="">Seleccione...</option>
-        <option value="Amazonas">Amazonas</option>
-        <option value="Áncash">Áncash</option>
-        <option value="Apurímac">Apurímac</option>
-        <option value="Arequipa">Arequipa</option>
-        <option value="Ayacucho">Ayacucho</option>
-        <option value="Cajamarca">Cajamarca</option>
-        <option value="Callao">Callao</option>
-        <option value="Cusco">Cusco</option>
-        <option value="Huancavelica">Huancavelica</option>
-        <option value="Huánuco">Huánuco</option>
-        <option value="Ica">Ica</option>
-        <option value="Junín">Junín</option>
-        <option value="La Libertad">La Libertad</option>
-        <option value="Lambayeque">Lambayeque</option>
-        <option value="Lima">Lima</option>
-        <option value="Loreto">Loreto</option>
-        <option value="Madre de Dios">Madre de Dios</option>
-        <option value="Moquegua">Moquegua</option>
-        <option value="Pasco">Pasco</option>
-        <option value="Piura">Piura</option>
-        <option value="Puno">Puno</option>
-        <option value="San Martín">San Martín</option>
-        <option value="Tacna">Tacna</option>
-        <option value="Tumbes">Tumbes</option>
-        <option value="Ucayali">Ucayali</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="fichaPostulante">Ficha de Postulante (Excel max 10 mb)</label>
+      <label class="required" for="fichaPostulante">Formato de inscripcion (Excel max 10 mb)</label>
       <input type="file" id="fichaPostulante" name="fichaPostulante" accept=".xlsx,.xls,.xlsm" required>
     </div>
 
     <div class="form-group">
-      <label class="required" for="fichaInvencion">Ficha de Invención (Word o PDF max 10 mb)</label>
-      <input type="file" id="fichaInvencion" name="fichaInvencion" accept=".doc,.docx,.pdf" required>
+      <label class="required" for="fichaInvencion">Fotografia_01 (Imagen max 10 mb)</label>
+      <input type="file" id="fichaInvencion" name="fichaInvencion" accept=".jpg,.jpeg,.png,.webp" required>
     </div>
 
     <div class="form-group">
-      <label class="required" for="actaCompromiso">Acta de Compromiso (Word o PDF max 10 mb)</label>
-      <input type="file" id="actaCompromiso" name="actaCompromiso" accept=".doc,.docx,.pdf" required>
+      <label class="required" for="actaCompromiso">Fotografia_02 (Imagen max 10 mb)</label>
+      <input type="file" id="actaCompromiso" name="actaCompromiso" accept=".jpg,.jpeg,.png,.webp" required>
     </div>
 
     <div class="loader" id="loader">
@@ -345,18 +267,14 @@
   const MAX_INTENTOS = 3;
   
   // URL del Web App de Google Apps Script (reemplazar con tu URL)
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxAMvMgsOE9tcp4Hz-nYXHKX8kCifUVCrUmDHfetzNsnHoO9sBEHfRGcPgH1R3ECT--9Q/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbweohEEsZUexnYs5K3IVfsMHz9AFHXM-7WnxP2Y-IK3j9InLS6oJmoPhCdeSKwcY9vu/exec';
 
   const form = document.getElementById('formConcurso');
   const mensaje = document.getElementById('mensaje');
   const loader = document.getElementById('loader');
   const btnSubmit = document.getElementById('btnSubmit');
-  const tipoParticipante = document.getElementById('tipoParticipante');
-  const grupoNombreInstitucion = document.getElementById('grupoNombreInstitucion');
-  const nombreInstitucionEmpresa = document.getElementById('nombreInstitucionEmpresa');
   const dniInput = document.getElementById('dni');
   const telefonoInput = document.getElementById('telefono');
-  const telefonoAltInput = document.getElementById('telefonoAlternativo');
   
   // Elementos del modal
   const modalOverlay = document.getElementById('modalOverlay');
@@ -580,26 +498,6 @@
   // Ejecutar validación de teléfonos en cada cambio
   telefonoInput.addEventListener('input', () => validarTelefono(telefonoInput));
   telefonoInput.addEventListener('blur', () => validarTelefono(telefonoInput));
-  telefonoAltInput.addEventListener('input', () => validarTelefono(telefonoAltInput));
-  telefonoAltInput.addEventListener('blur', () => validarTelefono(telefonoAltInput));
-
-  // Mostrar/ocultar campo de institución según tipo de participante
-  function actualizarVisibilidadInstitucion() {
-    const valor = tipoParticipante.value;
-    if (valor === 'Empresa' || valor === 'Centros académicos y de investigación') {
-      grupoNombreInstitucion.style.display = 'block';
-      nombreInstitucionEmpresa.required = true;
-    } else {
-      grupoNombreInstitucion.style.display = 'none';
-      nombreInstitucionEmpresa.required = false;
-      nombreInstitucionEmpresa.value = '';
-      nombreInstitucionEmpresa.setCustomValidity('');
-    }
-  }
-
-  // Ejecutar al cargar y cuando cambie la selección
-  tipoParticipante.addEventListener('change', actualizarVisibilidadInstitucion);
-  actualizarVisibilidadInstitucion();
 
   // Convertir archivo a Base64
   function fileToBase64(file) {
@@ -721,7 +619,6 @@
     
     // Validar teléfonos antes de enviar
     validarTelefono(telefonoInput);
-    validarTelefono(telefonoAltInput);
     
     // Agregar clase para mostrar validación
     form.parentElement.classList.add('was-validated');
@@ -779,7 +676,6 @@
       }
 
       const apellidoRep = document.getElementById('apellidosRepresentante').value;
-      const tipoParticipanteValor = document.getElementById('tipoParticipante').value;
 
       // Generar ID único para este envío
       const idEnvio = generarIdEnvio();
@@ -787,18 +683,13 @@
       // Construir objeto de datos
       let datos = {
         idEnvio: idEnvio,
-        tipoParticipante: tipoParticipanteValor,
-        nombreInstitucionEmpresa: tipoParticipanteValor === 'Diseñador Independiente' ? '-' : document.getElementById('nombreInstitucionEmpresa').value,
+        nombreInstitucionEmpresa: '-',
         titulo: document.getElementById('titulo').value,
-        sectorTecnologico: document.getElementById('sectorTecnologico').value,
         apellidosRepresentante: document.getElementById('apellidosRepresentante').value,
         nombreRepresentante: document.getElementById('nombreRepresentante').value,
         dni: document.getElementById('dni').value,
         telefono: document.getElementById('telefono').value,
-        telefonoAlternativo: document.getElementById('telefonoAlternativo').value,
         correo: document.getElementById('correo').value,
-        correoAlternativo: document.getElementById('correoAlternativo').value,
-        region: document.getElementById('region').value,
         fichaPostulanteBase64: fichaPostulante.base64,
         fichaPostulanteNombreArchivo: agregarApellidoAlNombre(fichaPostulante.nombre, apellidoRep),
         fichaInvencionBase64: fichaInvencion.base64,
