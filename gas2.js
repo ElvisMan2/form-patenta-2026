@@ -29,11 +29,11 @@ function subirArchivo(fileName, archivoBase64, folderId) {
  * ID de la hoja: 
  * Hoja: Registros
  */
-const SPREADSHEET_ID = '1-3CPyXQ-8QB0T4pzKLJMZ5eiO33AmV22Dr1bQJu6wkY';
+const SPREADSHEET_ID = '1fnqmB9S_ltOMcHq2yjN1vhSrt32-o5S5amqwagcus54';
 const SHEET_NAME = 'Respuestas';
-const FOLDER_ID_FORMATO_INSCRIPCION = '198W0ZIkUCiZIjpMcZ7g0Ec4-GrFslrLA';//formato de inscripcion
-const FOLDER_ID_FOTOGRAFIA01 = '1QjPLqJnKxA6VrMASnOTUieDFeIH0uoAo';
-const FOLDER_ID_FOTOGRAFIA02 = '13cBtzviuG9bcBJVfFAAU-4gTaCeXTDLa';
+const FOLDER_ID = '1MFRgfm46MhN9z-WaXcGkAklE0lTOpCHF';//ficha postulante
+const FOLDER_ID_FICHA_DIS = '1_SbbF-U39od8tYw1Ng1Zmcf4qfbUtHl9';
+const FOLDER_ID_ACTA_COMPROMISO = '1sx1tBO9I1C7xAnHmOKwQG8g2HrX6npId';
 
 /**
  * Guarda el estado de un envío en el cache
@@ -77,52 +77,54 @@ function guardarDatos(datos) {
     
     const fecha = Utilities.formatDate(new Date(), 'America/Lima', 'dd/MM/yyyy HH:mm:ss');
 
-    // Subir archivo formatoInscripcion solo si existe
-    let formatoInscripcionUrl = '';
-    if (datos.formatoInscripcionBase64 && datos.formatoInscripcionNombreArchivo) {
-      formatoInscripcionUrl = subirArchivo(
-        datos.formatoInscripcionNombreArchivo,
-        datos.formatoInscripcionBase64,
-        FOLDER_ID_FORMATO_INSCRIPCION
+    // Subir archivo fichaPostulante solo si existe
+    let fichaPostulanteUrl = '';
+    if (datos.fichaPostulanteBase64 && datos.fichaPostulanteNombreArchivo) {
+      fichaPostulanteUrl = subirArchivo(
+        datos.fichaPostulanteNombreArchivo,
+        datos.fichaPostulanteBase64,
+        FOLDER_ID
       );
     }
 
-    // Subir archivo fotografia01 solo si existe
-    let fotografia01Url = '';
-    if (datos.fotografia01Base64 && datos.fotografia01NombreArchivo) {
-      fotografia01Url = subirArchivo(
-        datos.fotografia01NombreArchivo,
-        datos.fotografia01Base64,
-        FOLDER_ID_FOTOGRAFIA01
+    // Subir archivo fichaInvencion solo si existe
+    let fichaInvencionUrl = '';
+    if (datos.fichaInvencionBase64 && datos.fichaInvencionNombreArchivo) {
+      fichaInvencionUrl = subirArchivo(
+        datos.fichaInvencionNombreArchivo,
+        datos.fichaInvencionBase64,
+        FOLDER_ID_FICHA_DIS
       );
     }
 
-    // Subir archivo fotografia02 solo si existe
-    let fotografia02Url = '';
-    if (datos.fotografia02Base64 && datos.fotografia02NombreArchivo) {
-      fotografia02Url = subirArchivo(
-        datos.fotografia02NombreArchivo,
-        datos.fotografia02Base64,
-        FOLDER_ID_FOTOGRAFIA02
+    // Subir archivo actaCompromiso solo si existe
+    let actaCompromisoUrl = '';
+    if (datos.actaCompromisoBase64 && datos.actaCompromisoNombreArchivo) {
+      actaCompromisoUrl = subirArchivo(
+        datos.actaCompromisoNombreArchivo,
+        datos.actaCompromisoBase64,
+        FOLDER_ID_ACTA_COMPROMISO
       );
     }
 
     // Crear array con los datos
     const fila = [
       fecha,
-      datos.correo,
-      datos.nombreRepresentante,
-      datos.apellidosRepresentante,
-      datos.telefono,
-      formatoInscripcionUrl,
-      fotografia01Url,
-      fotografia02Url,
-      datos.enlaceAlVideo,
+      datos.tipoParticipante,
+      datos.nombreInstitucionEmpresa,
       datos.titulo,
-      datos.descripcionDelInvento,
-      datos.compromiso_1 || '',
-      datos.compromiso_2 || '',
-      datos.compromiso_3 || ''
+      datos.sectorTecnologico,
+      datos.apellidosRepresentante,
+      datos.nombreRepresentante,
+      datos.dni,
+      datos.telefono,
+      datos.telefonoAlternativo,
+      datos.correo,
+      datos.correoAlternativo,
+      datos.region,
+      fichaPostulanteUrl,
+      fichaInvencionUrl,
+      actaCompromisoUrl
     ];
     
     // Agregar nueva fila al final
@@ -148,9 +150,9 @@ function guardarDatos(datos) {
 const SECURITY_CONFIG = {
   MAX_REQUESTS_PER_IP: 10, // máximo 10 envíos por IP por hora
   MAX_REQUESTS_PER_EMAIL: 10, // máximo 10 envíos por email por día
-  MIN_FORM_TIME: 15, // mínimo 15 segundos para completar el formulario
+  MIN_FORM_TIME: 30, // mínimo 30 segundos para completar el formulario
   MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB máximo por archivo
-  ALLOWED_ORIGINS: ['https://www.patenta.pe', 'https://elvisman2.github.io'],
+  ALLOWED_ORIGINS: ['https://www.patenta.pe'],
   TOKEN_VALIDITY: 1800000 // 30 minutos en millisegundos
 };
 
@@ -251,19 +253,69 @@ function verificarRateLimit(ip, email) {
 /**
  * Valida el origen de la petición
  */
-function validarOrigen(origin) {
-  // Si origin está vacío, es una petición desde la misma aplicación
-  if (!origin || origin === '') {
-    return { valido: true };
+function validarOrigen(headers) {
+  const origen = headers['origin'] || headers['referer'] || '';
+  const origenPermitido = SECURITY_CONFIG.ALLOWED_ORIGINS.some(allowed => 
+    origen.includes(allowed) || allowed === '*'
+  );
+  
+  if (!origenPermitido && origen !== '') {
+    return { valido: false, error: 'Origen no autorizado' };
   }
   
-  // Verificar si el origen está en la lista permitida
-  const origenPermitido = SECURITY_CONFIG.ALLOWED_ORIGINS.some(allowed => {
-    return origin.includes(allowed) || origin === allowed;
-  });
+  return { valido: true };
+}
+
+/**
+ * Valida los datos del formulario
+ */
+function validarDatos(datos) {
+  const camposRequeridos = [
+    'tipoParticipante', 'titulo', 'sectorTecnologico', 
+    'apellidosRepresentante', 'nombreRepresentante', 'dni', 
+    'telefono', 'telefonoAlternativo', 'correo', 'correoAlternativo', 'region'
+  ];
   
-  if (!origenPermitido) {
-    return { valido: false, error: 'Origen no autorizado: ' + origin };
+  // Verificar campos requeridos
+  for (const campo of camposRequeridos) {
+    if (!datos[campo] || datos[campo].trim() === '') {
+      return { valido: false, error: `Campo requerido faltante: ${campo}` };
+    }
+  }
+  
+  // Validar DNI
+  if (!/^[0-9]{8}$/.test(datos.dni)) {
+    return { valido: false, error: 'DNI inválido' };
+  }
+  
+  // Validar emails
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(datos.correo) || !emailRegex.test(datos.correoAlternativo)) {
+    return { valido: false, error: 'Email inválido' };
+  }
+  
+  // Validar teléfonos
+  const telefonoRegex = /^[0-9+\-]{7,15}$/;
+  if (!telefonoRegex.test(datos.telefono) || !telefonoRegex.test(datos.telefonoAlternativo)) {
+    return { valido: false, error: 'Teléfono inválido' };
+  }
+  
+  // Verificar honeypot
+  if (datos.honeypot && datos.honeypot !== '') {
+    return { valido: false, error: 'Envío de bot detectado' };
+  }
+  
+  // Validar tamaño de archivos
+  if (datos.fichaPostulanteBase64 && datos.fichaPostulanteBase64.length > SECURITY_CONFIG.MAX_FILE_SIZE * 1.4) {
+    return { valido: false, error: 'Archivo de ficha postulante muy grande' };
+  }
+  
+  if (datos.fichaInvencionBase64 && datos.fichaInvencionBase64.length > SECURITY_CONFIG.MAX_FILE_SIZE * 1.4) {
+    return { valido: false, error: 'Archivo de ficha invención muy grande' };
+  }
+  
+  if (datos.actaCompromisoBase64 && datos.actaCompromisoBase64.length > SECURITY_CONFIG.MAX_FILE_SIZE * 1.4) {
+    return { valido: false, error: 'Archivo de acta compromiso muy grande' };
   }
   
   return { valido: true };
@@ -284,11 +336,8 @@ function doPost(e) {
       guardarEstadoEnvio(idEnvio, 'pending', 'Procesando...');
     }
     
-    // Obtener origen de los headers
-    const origin = e.parameter['origin'] || e.parameter['referer'] || '';
-    
     // Validar origen
-    const validacionOrigen = validarOrigen(origin);
+    const validacionOrigen = validarOrigen(e.parameter);
     if (!validacionOrigen.valido) {
       if (idEnvio) {
         guardarEstadoEnvio(idEnvio, 'error', 'Acceso denegado: ' + validacionOrigen.error);
@@ -296,6 +345,18 @@ function doPost(e) {
       return createResponseWithCORS({
         success: false,
         message: 'Acceso denegado: ' + validacionOrigen.error
+      });
+    }
+    
+    // Validar datos
+    const validacionDatos = validarDatos(params);
+    if (!validacionDatos.valido) {
+      if (idEnvio) {
+        guardarEstadoEnvio(idEnvio, 'error', validacionDatos.error);
+      }
+      return createResponseWithCORS({
+        success: false,
+        message: validacionDatos.error
       });
     }
     
@@ -312,7 +373,7 @@ function doPost(e) {
     }
     
     // Obtener IP del usuario (aproximada)
-    const ip = e.parameter['user_ip'] || e.clientAddress || 'unknown';
+    const ip = e.parameter['user_ip'] || 'unknown';
     
     // Verificar rate limiting
     const verificacionRate = verificarRateLimit(ip, params.correo);
@@ -343,18 +404,9 @@ function doPost(e) {
     }
     return createResponseWithCORS({
       success: false,
-      message: 'Error interno del servidor: ' + error.message
+      message: 'Error interno del servidor'
     });
   }
-}
-
-/**
- * Maneja peticiones OPTIONS (preflight CORS)
- * Google Apps Script maneja CORS automáticamente para Web Apps públicos
- */
-function doOptions(e) {
-  return ContentService.createTextOutput('OK')
-    .setMimeType(ContentService.MimeType.TEXT);
 }
 
 /**
@@ -404,11 +456,8 @@ function createResponseWithCORS(data) {
   const output = ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
   
-  // Google Apps Script maneja CORS automáticamente cuando está publicado correctamente
-  // como Web App con permisos públicos. Sin embargo, es importante que:
-  // 1. El proyecto esté publicado como "Execute as" el propietario
-  // 2. Permisos sean "Anyone" o "Anyone, even anonymous"
-  // 3. El endpoint sea accesible públicamente
+  // Nota: Apps Script maneja CORS automáticamente cuando el proyecto está publicado como Web App
+  // con acceso "Cualquier persona" o "Cualquier persona, incluso anónimos"
   
   return output;
 }
