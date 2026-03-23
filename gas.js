@@ -274,6 +274,7 @@ function validarOrigen(origin) {
  */
 function doPost(e) {
   let idEnvio = null;
+  let origin = '';
   
   try {
     const params = JSON.parse(e.postData.contents);
@@ -285,7 +286,7 @@ function doPost(e) {
     }
     
     // Obtener origen de los headers
-    const origin = e.parameter['origin'] || e.parameter['referer'] || '';
+    origin = e.parameter['origin'] || e.parameter['referer'] || '';
     
     // Validar origen
     const validacionOrigen = validarOrigen(origin);
@@ -296,7 +297,7 @@ function doPost(e) {
       return createResponseWithCORS({
         success: false,
         message: 'Acceso denegado: ' + validacionOrigen.error
-      });
+      }, origin);
     }
     
     // Validar token
@@ -308,7 +309,7 @@ function doPost(e) {
       return createResponseWithCORS({
         success: false,
         message: 'Token inválido: ' + validacionToken.error
-      });
+      }, origin);
     }
     
     // Obtener IP del usuario (aproximada)
@@ -323,7 +324,7 @@ function doPost(e) {
       return createResponseWithCORS({
         success: false,
         message: verificacionRate.error
-      });
+      }, origin);
     }
     
     // Procesar datos si todas las validaciones pasan
@@ -334,7 +335,7 @@ function doPost(e) {
       guardarEstadoEnvio(idEnvio, 'success', 'Formulario enviado exitosamente');
     }
     
-    return createResponseWithCORS(resultado);
+    return createResponseWithCORS(resultado, origin);
     
   } catch (error) {
     Logger.log('Error en doPost: ' + error.message);
@@ -344,7 +345,7 @@ function doPost(e) {
     return createResponseWithCORS({
       success: false,
       message: 'Error interno del servidor: ' + error.message
-    });
+    }, origin);
   }
 }
 
@@ -353,11 +354,18 @@ function doPost(e) {
  * Responde con los headers CORS necesarios para que el navegador permita la petición
  */
 function doOptions(e) {
+  const origin = e.parameter['origin'] || e.parameter['referer'] || '';
+  const allowedOrigins = ['https://www.patenta.pe', 'https://elvisman2.github.io'];
+  
+  // Verificar si el origen está en la lista blanca
+  const isAllowed = origin && allowedOrigins.some(allowed => origin.includes(allowed));
+  const allowOrigin = isAllowed ? origin : 'https://www.patenta.pe';
+  
   const output = ContentService.createTextOutput('')
     .setMimeType(ContentService.MimeType.TEXT);
   
   // Agregar todos los headers CORS requeridos para preflight
-  output.addHeader('Access-Control-Allow-Origin', '*');
+  output.addHeader('Access-Control-Allow-Origin', allowOrigin);
   output.addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, HEAD, PUT, DELETE, PATCH');
   output.addHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
   output.addHeader('Access-Control-Max-Age', '86400');
@@ -372,13 +380,14 @@ function doOptions(e) {
  */
 function doGet(e) {
   const action = e.parameter.action;
+  const origin = e.parameter['origin'] || e.parameter['referer'] || '';
   
   if (action === 'getToken') {
     return createResponseWithCORS({
       success: true,
       token: generarToken(),
       timestamp: new Date().getTime()
-    });
+    }, origin);
   }
   
   if (action === 'checkStatus') {
@@ -387,35 +396,47 @@ function doGet(e) {
       return createResponseWithCORS({
         status: 'error',
         message: 'ID de envío no proporcionado'
-      });
+      }, origin);
     }
     
     const estado = obtenerEstadoEnvio(idEnvio);
     if (estado) {
-      return createResponseWithCORS(estado);
+      return createResponseWithCORS(estado, origin);
     } else {
       return createResponseWithCORS({
         status: 'notfound',
         message: 'Estado no encontrado'
-      });
+      }, origin);
     }
   }
   
   return createResponseWithCORS({
     success: true,
     message: 'API funcionando correctamente'
-  });
+  }, origin);
 }
 
 /**
  * Crea una respuesta JSON con headers CORS y seguridad apropiados
+ * @param {Object} data - Datos a retornar
+ * @param {string} origin - Origen de la petición (opcional)
  */
-function createResponseWithCORS(data) {
+function createResponseWithCORS(data, origin) {
   const output = ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
   
-  // Agregar todos los headers CORS necesarios
-  output.addHeader('Access-Control-Allow-Origin', '*');
+  // Determinar el origen permitido
+  const allowedOrigins = ['https://www.patenta.pe', 'https://elvisman2.github.io'];
+  let allowOrigin = '';
+  
+  if (origin) {
+    // Verificar si el origen está en la lista blanca
+    const isAllowed = allowedOrigins.some(allowed => origin.includes(allowed));
+    allowOrigin = isAllowed ? origin : '';
+  }
+  
+  // Usar el origen permitido o rechazar (empty string = se rechaza)
+  output.addHeader('Access-Control-Allow-Origin', allowOrigin || 'https://www.patenta.pe');
   output.addHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, HEAD, PUT, DELETE, PATCH');
   output.addHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
   output.addHeader('Access-Control-Max-Age', '86400');
