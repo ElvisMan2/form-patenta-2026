@@ -149,8 +149,8 @@ function guardarDatos(datos) {
  * Configuración de seguridad
  */
 const SECURITY_CONFIG = {
-  MAX_REQUESTS_PER_IP: 10, // máximo 10 envíos por IP por hora
-  MAX_REQUESTS_PER_EMAIL: 10, // máximo 10 envíos por email por día
+  MAX_REQUESTS_PER_IP: 25, // máximo 25 envíos por IP por hora
+  MAX_REQUESTS_PER_EMAIL: 25, // máximo 25 envíos por email por día
   MIN_FORM_TIME: 15, // mínimo 15 segundos para completar el formulario
   MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB máximo por archivo
   ALLOWED_ORIGINS: ['https://www.patenta.pe'],
