@@ -111,17 +111,12 @@ function guardarDatos(datos) {
     const fila = [
       fecha,
       datos.formaParticipacion || '',
-      datos.nombreInstitucionEmpresa,
       datos.titulo,
-      '',
       datos.apellidosRepresentante,
       datos.nombreRepresentante,
       datos.dni,
       datos.telefono,
-      '',
       datos.correo,
-      '',
-      '',
       fichaPostulanteUrl,
       fichaInvencionUrl,
       actaCompromisoUrl,
@@ -290,42 +285,9 @@ function validarDatos(datos) {
     }
   }
   
-  // Validar DNI
-  if (!/^[0-9]{8}$/.test(datos.dni)) {
-    return { valido: false, error: 'DNI inválido' };
-  }
-  
-  // Validar emails
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(datos.correo)) {
-    return { valido: false, error: 'Email inválido' };
-  }
-  
-  // Validar teléfonos
-  const telefonoRegex = /^[0-9+\-]{7,15}$/;
-  if (!telefonoRegex.test(datos.telefono)) {
-    return { valido: false, error: 'Teléfono inválido' };
-  }
-
-  // Validar forma de participación
-  const formasPermitidas = ['Participación presencial', 'Participación en linea'];
-  if (!formasPermitidas.includes(datos.formaParticipacion)) {
-    return { valido: false, error: 'Forma de participación inválida' };
-  }
-
-  // Validar enlace de video
-  const urlRegex = /^https?:\/\/.+/i;
-  if (!urlRegex.test(datos.videoInvento)) {
-    return { valido: false, error: 'Enlace de video inválido' };
-  }
-
   // Validar campos de texto adicionales
   if (datos.expediente.length > 100) {
     return { valido: false, error: 'Expediente excede el límite de caracteres' };
-  }
-
-  if (datos.descripcion.length < 10) {
-    return { valido: false, error: 'Descripción demasiado corta' };
   }
 
   // Validar declaraciones obligatorias

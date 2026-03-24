@@ -83,6 +83,60 @@
     text-align: center;
     margin: 10px 0;
   }
+  .form-concurso .form-step {
+    display: none;
+  }
+  .form-concurso .form-step.activo {
+    display: block;
+  }
+  .form-concurso .step-title {
+    margin: 0 0 8px;
+    color: #1f3d52;
+  }
+  .form-concurso .section-intro {
+    margin: 0 0 18px;
+    color: #4d4d4d;
+    line-height: 1.45;
+  }
+  .form-concurso .step-actions {
+    margin-top: 10px;
+  }
+  .form-concurso .step-actions.multiple {
+    display: flex;
+    gap: 10px;
+  }
+  .form-concurso .btn-next {
+    background-color: #0073aa;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  .form-concurso .btn-next:hover {
+    background-color: #005a87;
+  }
+  .form-concurso .btn-back {
+    background-color: #6c757d;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  .form-concurso .btn-back:hover {
+    background-color: #5a6268;
+  }
+  .form-concurso .step-actions.multiple .btn-next,
+  .form-concurso .step-actions.multiple .btn-back,
+  .form-concurso .step-actions.multiple .btn-submit {
+    width: auto;
+    flex: 1;
+  }
   
   /* Estilos del Modal */
   .modal-overlay {
@@ -180,111 +234,175 @@
       <input type="text" id="honeypot" name="honeypot" tabindex="-1" autocomplete="off">
     </div>
 
-    <div class="form-group">
-      <label class="required" for="apellidosRepresentante">Apellidos del Representante</label>
-      <input type="text" id="apellidosRepresentante" name="apellidosRepresentante" required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="nombreRepresentante">Nombres del Representante</label>
-      <input type="text" id="nombreRepresentante" name="nombreRepresentante" required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="dni">DNI</label>
-      <input type="text" id="dni" name="dni" maxlength="8" 
-             pattern="[0-9]{8}" 
-             title="El DNI debe contener 8 dígitos"
-             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-             required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="telefono">Teléfono</label>
-      <input type="tel" id="telefono" name="telefono" 
-             pattern="[0-9+\-]{7,15}"
-             title="El teléfono debe contener al menos 7 dígitos"
-             oninput="this.value = this.value.replace(/[^0-9+\-]/g, '')"
-             required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="correo">Correo Electrónico</label>
-      <input type="email" id="correo" name="correo" 
-             pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
-             title="Ingrese un correo electrónico válido (ejemplo: usuario@dominio.com)"
-             required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="formaParticipacion">Forma de participación</label>
-      <select id="formaParticipacion" name="formaParticipacion" required>
-        <option value="">Seleccione...</option>
-        <option value="Participación presencial">Participación presencial</option>
-        <option value="Participación en linea">Participación en linea</option>
-      </select>
-    </div>
-
-
-    <div class="form-group">
-      <label class="required" for="fichaPostulante">Formato de inscripcion (Excel max 10 mb)</label>
-      <input type="file" id="fichaPostulante" name="fichaPostulante" accept=".xlsx,.xls,.xlsm" required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="fichaInvencion">Fotografia_01 (Imagen max 10 mb)</label>
-      <input type="file" id="fichaInvencion" name="fichaInvencion" accept=".jpg,.jpeg,.png,.webp" required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="actaCompromiso">Fotografia_02 (Imagen max 10 mb)</label>
-      <input type="file" id="actaCompromiso" name="actaCompromiso" accept=".jpg,.jpeg,.png,.webp" required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="videoInvento">video del invento</label>
-      <input type="url" id="videoInvento" name="videoInvento"
-             placeholder="https://www.youtube.com/watch?v=..."
-             title="Ingrese un enlace valido de YouTube o similar"
-             required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="titulo">Título del Proyecto</label>
-      <input type="text" id="titulo" name="titulo" required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="expediente">expediente</label>
-      <input type="text" id="expediente" name="expediente" maxlength="100" required>
-    </div>
-
-    <div class="form-group">
-      <label class="required" for="descripcion">descripción</label>
-      <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
-    </div>
-
-    <div class="form-group">
-      <label class="required">Declaro que acepto conocer que la participación en la KIWIE 2026, como parte de la delegación peruana, implica los siguientes puntos, marque en señal de aceptación y entendimiento que debe:</label>
-      <div style="margin-bottom: 10px;">
-        <input type="checkbox" id="declaracion1" name="declaracion1" required>
-        <label for="declaracion1" style="display: inline; font-weight: normal;">Obligatoriamente: Pagar la tarifa de participación, que asciende a $100 + ITF ($60) o $400 + ITF ($240), según el tipo de solicitud, junto con la delegación (costo compartido entre 3 personas), y de corresponder las tasas correspondientes a la delegación física.</label>
+    <section class="form-step activo" data-step="1">
+      <h3 class="step-title">Delegación Perú / Pre-Inscripción KIWIE 2026</h3>
+      <div class="section-intro">
+        <p>El Indecopi convoca a inventoras peruanas con patente en trámite o concedida para representar al Perú en la Korea International Women's Invention Exposition - KIWIE 2026, que se llevará a cabo del 16 al 18 de julio de 2026.</p>
+        <p>📍 Más información:</p>
+        <p><strong>Consideraciones Importantes:</strong></p>
+        <p>Las interesadas deberán pre-inscribirse en el presente formulario antes del 11 de mayo de 2026. Posteriormente, serán agrupadas en ternas para la aplicación final gestionada por Indecopi. No se considerarán proyectos que hayan participado en ediciones anteriores.</p>
+        <p><strong>Modalidades de participación</strong></p>
+        <p>Proxy Participation (participación a distancia): Indecopi administrará la exhibición de las invenciones en Corea del Sur sin necesidad de viajar. Opcionalmente, se podrá enviar un prototipo físico para evaluación del jurado. El envío corre por cuenta de la participante y el invento no será devuelto.</p>
+        <p>Participación presencial: Las inventoras que deseen asistir deberán informarlo a Indecopi para recibir asistencia en la inscripción. Todos los gastos de viaje y estadía serán cubiertos por la participante.</p>
+        <p><strong>Costos de inscripción</strong></p>
+        <p>Las participantes serán agrupadas en equipos de tres, compartiendo el costo de inscripción según la modalidad elegida:<br>Presencial: USD 400 + ITF<br>A distancia: USD 100 + ITF</p>
+        <p>Este pago permite:<br>✔ Exhibir los inventos en formato póster en la KIWIE 2026.<br>✔ Recibir diplomas y/o medallas obtenidas en el certamen.</p>
+        <p><strong>Requisitos adicionales</strong></p>
+        <p>📌 Video explicativo del invento en inglés (o con subtítulos y transcripción en inglés), con fecha límite de entrega el 13 de mayo de 2026 en caso de no completarse al momento de la inscripción.</p>
+        <p>Indecopi difundirá la participación de las inventoras en medios y organizará un evento de reconocimiento para destacar la importancia del rol de las mujeres en la invención y patentamiento en el Perú.</p>
+        <p>💡 ¡Participa y muestra tu talento al mundo! 🚀</p>
       </div>
-      <div style="margin-bottom: 10px;">
-        <input type="checkbox" id="declaracion2" name="declaracion2" required>
-        <label for="declaracion2" style="display: inline; font-weight: normal;">Obligatoriamente: Realizar un video explicativo, en inglés o subtitulado en inglés de máximo 2 minutos, hasta el 02 de abril de 2025, en caso no se haya adjuntado al momento de la presente inscripción.</label>
+
+      <div class="form-group">
+        <label class="required" for="apellidosRepresentante">Apellidos del Representante</label>
+        <input type="text" id="apellidosRepresentante" name="apellidosRepresentante" required>
       </div>
-      <div>
-        <input type="checkbox" id="declaracion3" name="declaracion3" required>
-        <label for="declaracion3" style="display: inline; font-weight: normal;">Al completar el formulario de inscripción, el participante acepta que sus datos personales serán utilizados únicamente con fines de contacto y coordinación de asuntos relativos a la conformación de la delegación y puede revocar este consentimiento escribiendo a patenta@indecopi.gob.pe</label>
+
+      <div class="form-group">
+        <label class="required" for="nombreRepresentante">Nombres del Representante</label>
+        <input type="text" id="nombreRepresentante" name="nombreRepresentante" required>
       </div>
-    </div>
+
+      <div class="form-group">
+        <label class="required" for="dni">DNI</label>
+        <input type="text" id="dni" name="dni" maxlength="8"
+               pattern="[0-9]{8}"
+               title="El DNI debe contener 8 dígitos"
+               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label class="required" for="telefono">Teléfono</label>
+        <input type="tel" id="telefono" name="telefono"
+               pattern="[0-9+\-]{7,15}"
+               title="El teléfono debe contener al menos 7 dígitos"
+               oninput="this.value = this.value.replace(/[^0-9+\-]/g, '')"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label class="required" for="correo">Correo Electrónico</label>
+        <input type="email" id="correo" name="correo"
+               pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+               title="Ingrese un correo electrónico válido (ejemplo: usuario@dominio.com)"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label class="required" for="formaParticipacion">Forma de participación</label>
+        <select id="formaParticipacion" name="formaParticipacion" required>
+          <option value="">Seleccione...</option>
+          <option value="Participación presencial">Participación presencial</option>
+          <option value="Participación en linea">Participación en linea</option>
+        </select>
+      </div>
+
+      <div class="step-actions">
+        <button type="button" class="btn-next" id="btnContinuar1">Continuar</button>
+      </div>
+    </section>
+
+    <section class="form-step" data-step="2">
+      <h3 class="step-title">Formato de inscripción</h3>
+      <p class="section-intro">A continuación se encuentra el formado de postulación, descárguelo y complételo adecuadamente.
+Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que serán usadas para la publicación de la invención, así como un vídeo de la invención que se utilizará para el proceso de evaluación de jurado calificador.</p>
+
+      <div class="form-group">
+        <label class="required" for="fichaPostulante">Formato de inscripcion (Excel max 10 mb)</label>
+        <input type="file" id="fichaPostulante" name="fichaPostulante" accept=".xlsx,.xls,.xlsm" required>
+      </div>
+
+      <div class="form-group">
+        <label class="required" for="fichaInvencion">Fotografia_01 (Imagen max 10 mb)</label>
+        <input type="file" id="fichaInvencion" name="fichaInvencion" accept=".jpg,.jpeg,.png,.webp" required>
+      </div>
+
+      <div class="form-group">
+        <label class="required" for="actaCompromiso">Fotografia_02 (Imagen max 10 mb)</label>
+        <input type="file" id="actaCompromiso" name="actaCompromiso" accept=".jpg,.jpeg,.png,.webp" required>
+      </div>
+
+      <div class="form-group">
+        <label class="required" for="videoInvento">video del invento</label>
+        <input type="url" id="videoInvento" name="videoInvento"
+               placeholder="https://www.youtube.com/watch?v=..."
+               title="Ingrese un enlace valido de YouTube o similar"
+               required>
+      </div>
+
+      <div class="step-actions multiple">
+        <button type="button" class="btn-back" id="btnAtras2">Atras</button>
+        <button type="button" class="btn-next" id="btnContinuar2">Continuar</button>
+      </div>
+    </section>
+
+    <section class="form-step" data-step="3">
+      <h3 class="step-title">Información relevante de la Invención y su identificación</h3>
+      <p class="section-intro">Registre los datos técnicos del proyecto: título, expediente y descripción.</p>
+
+      <div class="form-group">
+        <label class="required" for="titulo">Título del Proyecto</label>
+        <input type="text" id="titulo" name="titulo" required>
+      </div>
+
+      <div class="form-group">
+        <label class="required" for="expediente">expediente</label>
+        <input type="text" id="expediente" name="expediente" maxlength="100" required>
+      </div>
+
+      <div class="form-group">
+        <label class="required" for="descripcion">descripción</label>
+        <textarea id="descripcion" name="descripcion" rows="5" required></textarea>
+      </div>
+
+      <div class="step-actions multiple">
+        <button type="button" class="btn-back" id="btnAtras3">Atras</button>
+        <button type="button" class="btn-next" id="btnContinuar3">Continuar</button>
+      </div>
+    </section>
+
+    <section class="form-step" data-step="4">
+      <h3 class="step-title">Conocimiento informado del procedimiento de participación en la KIWIE 2026</h3>
+      <div class="section-intro">
+        <p><strong>Procedimiento de participación:</strong></p>
+        <p>1) Pre-Inscripción - hasta el 11 de mayo de 2026: Fecha límite para completar este formulario.</p>
+        <p>2) Preparación de la inscripción a KIWIE - hasta el 15 de mayo: De estar conforme la información de su pre-inscripción, el Indecopi se pondrá en contacto con usted para agruparla junto con otras 2 inventoras para formar una terna (por lo menos), y así inscribirse en conjunto para participar en la KIWIE 2026.</p>
+        <p>3) Inscripción de la Delegación Peruana - hasta el 15 de mayo: El Indecopi, en nombre de todas las participantes, realizará la inscripción de la delegación con los organizadores. Esta fase no incluye aún el pago por concepto de inscripción.</p>
+        <p>4) Confirmación de la inscripción 5 a 10 días útiles a partir de la inscripción: Los organizadores de la KIWIE 2026 evaluarán y confirmarán la inscripción de la delegación. A partir de las invenciones aceptadas a participar se calculará el pago a realizar.</p>
+        <p>5) Pago de inscripción y envío de vídeos de exposición - 20 de mayo, la fecha será comunicada de acuerdo con la organización de Kiwie 2026: La delegación realizará la recaudación de $100+ITF ($60)=$160 o $400+ITF ($240), que serán cubiertos conjuntamente por las inventoras que conformen cada terna designada por el Indecopi. El Indecopi coordinará activamente con la delegación para hacer efectivo el pago de la inscripción en beneficio de todas las participantes. En caso de que el monto resulte diferente de lo calculado por cuestiones aritméticas, se comunicará oportunamente a las pre-inscritas para completar o devolver la diferencia.</p>
+        <p>6) (Opcionalmente): Las inventoras que se inscriban para viajar y participar presencialmente, deberán comunicárselo al Indecopi oportunamente a través del presente formulario, de esta manera se conformará una delegación de participación física, donde aplicarán otras reglas de inscripción, las cuales se comunicarán a la delegación física oportunamente.</p>
+        <p>7) Exposición del 16 al 18 de julio de 2026 (3 días): El Jurado evaluador revisará la exposición dentro del local de la KIWIE 2026. La descripción, las fotografías y el video explicativo servirán para evaluar las invenciones.</p>
+        <p>8) Los resultados y reconocimientos serán comunicados al Indecopi. El Indecopi se asegurará de difundir los resultados de la participación de la Delegación a través de notas de prensa y entrevistas a las inventoras participantes como parte de su función como entidad coordinadora.</p>
+        <p>9) Los organizadores de KIWIE 2026 enviarán al Indecopi los diplomas de participación, medallas o reconocimientos que las inventoras hayan obtenido como parte de su participación en la Exhibición. El Indecopi informará y trasladará el monto que se requiera para el proceso de desaduanaje del paquete enviado a todas las participantes de manera proporcional. El Indecopi se hará cargo de hacer entrega de estos materiales previa coordinación con las inventoras y/o de programar un evento de reconocimiento para la entrega y divulgación de los resultados.</p>
+      </div>
+
+      <div class="form-group">
+        <label class="required">Declaro que acepto conocer que la participación en la KIWIE 2026, como parte de la delegación peruana, implica los siguientes puntos, marque en señal de aceptación y entendimiento que debe:</label>
+        <div style="margin-bottom: 10px;">
+          <input type="checkbox" id="declaracion1" name="declaracion1" required>
+          <label for="declaracion1" style="display: inline; font-weight: normal;">Obligatoriamente: Pagar la tarifa de participación, que asciende a $100 + ITF ($60) o $400 + ITF ($240), según el tipo de solicitud, junto con la delegación (costo compartido entre 3 personas), y de corresponder las tasas correspondientes a la delegación física.</label>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <input type="checkbox" id="declaracion2" name="declaracion2" required>
+          <label for="declaracion2" style="display: inline; font-weight: normal;">Obligatoriamente: Realizar un video explicativo, en inglés o subtitulado en inglés de máximo 2 minutos, hasta el 02 de abril de 2025, en caso no se haya adjuntado al momento de la presente inscripción.</label>
+        </div>
+        <div>
+          <input type="checkbox" id="declaracion3" name="declaracion3" required>
+          <label for="declaracion3" style="display: inline; font-weight: normal;">Al completar el formulario de inscripción, el participante acepta que sus datos personales serán utilizados únicamente con fines de contacto y coordinación de asuntos relativos a la conformación de la delegación y puede revocar este consentimiento escribiendo a patenta@indecopi.gob.pe</label>
+        </div>
+      </div>
+
+      <div class="step-actions multiple">
+        <button type="button" class="btn-back" id="btnAtras4">Atras</button>
+        <button type="submit" class="btn-submit" id="btnSubmit">Enviar Formulario</button>
+      </div>
+    </section>
 
     <div class="loader" id="loader">
       <p>Enviando formulario, por favor espere...</p>
     </div>
 
-    <button type="submit" class="btn-submit" id="btnSubmit">Enviar Formulario</button>
   </form>
 
   <div class="mensaje" id="mensaje"></div>
@@ -310,14 +428,22 @@
   const MAX_INTENTOS = 3;
   
   // URL del Web App de Google Apps Script (reemplazar con tu URL)
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8RpL5uEkdoXeGehbSLFvsRuhbLf6Mj5-Gz6MvQnIk7mT96fGdkLNhaLIP0Yz14MLv/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVZGl2FsOcicBK8yrpS2xhv4VsP0luduMxIkWubpri4ThdYnxC6mUWB9rq27CTXYYL/exec';
 
   const form = document.getElementById('formConcurso');
   const mensaje = document.getElementById('mensaje');
   const loader = document.getElementById('loader');
   const btnSubmit = document.getElementById('btnSubmit');
+  const btnContinuar1 = document.getElementById('btnContinuar1');
+  const btnContinuar2 = document.getElementById('btnContinuar2');
+  const btnContinuar3 = document.getElementById('btnContinuar3');
+  const btnAtras2 = document.getElementById('btnAtras2');
+  const btnAtras3 = document.getElementById('btnAtras3');
+  const btnAtras4 = document.getElementById('btnAtras4');
   const dniInput = document.getElementById('dni');
   const telefonoInput = document.getElementById('telefono');
+  const pasosFormulario = Array.from(document.querySelectorAll('.form-step'));
+  let pasoActual = 1;
   
   // Elementos del modal
   const modalOverlay = document.getElementById('modalOverlay');
@@ -330,6 +456,42 @@
 
   // Variable para controlar si el envío fue exitoso
   let envioExitoso = false;
+
+  function obtenerPasoActual() {
+    return pasosFormulario.find((paso) => paso.classList.contains('activo'));
+  }
+
+  function mostrarPaso(numeroPaso) {
+    pasoActual = numeroPaso;
+    pasosFormulario.forEach((paso, index) => {
+      paso.classList.toggle('activo', index === numeroPaso - 1);
+    });
+    form.parentElement.classList.remove('was-validated');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function validarCamposVisibles() {
+    const pasoVisible = obtenerPasoActual();
+    if (!pasoVisible) {
+      return false;
+    }
+
+    const controles = Array.from(pasoVisible.querySelectorAll('input, select, textarea'));
+
+    for (const control of controles) {
+      if (control.type === 'hidden') {
+        continue;
+      }
+
+      if (!control.checkValidity()) {
+        control.focus();
+        control.reportValidity();
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   /**
    * Obtiene un token del servidor (opcional, no crítico)
@@ -410,9 +572,9 @@
   /**
    * Validar tamaño de archivos
    */
-  function validarTamañoArchivos() {
+  function validarTamañoArchivos(idsArchivos) {
     const maxSize = 10 * 1024 * 1024; // 10MB
-    const archivos = ['fichaPostulante', 'fichaInvencion', 'actaCompromiso'];
+    const archivos = idsArchivos || ['fichaPostulante', 'fichaInvencion', 'actaCompromiso'];
     
     for (const archivo of archivos) {
       const input = document.getElementById(archivo);
@@ -587,6 +749,57 @@
     return `envio_${timestamp}_${random}`;
   }
 
+  btnContinuar1.addEventListener('click', function() {
+    form.parentElement.classList.add('was-validated');
+
+    validarDNI();
+    validarTelefono(telefonoInput);
+
+    if (!validarCamposVisibles()) {
+      return;
+    }
+
+    mostrarPaso(2);
+  });
+
+  btnContinuar2.addEventListener('click', function() {
+    form.parentElement.classList.add('was-validated');
+
+    if (!validarCamposVisibles()) {
+      return;
+    }
+
+    const validacionArchivosPaso2 = validarTamañoArchivos(['fichaPostulante', 'fichaInvencion', 'actaCompromiso']);
+    if (!validacionArchivosPaso2.valido) {
+      mostrarModal(validacionArchivosPaso2.mensaje, 'error');
+      return;
+    }
+
+    mostrarPaso(3);
+  });
+
+  btnContinuar3.addEventListener('click', function() {
+    form.parentElement.classList.add('was-validated');
+
+    if (!validarCamposVisibles()) {
+      return;
+    }
+
+    mostrarPaso(4);
+  });
+
+  btnAtras2.addEventListener('click', function() {
+    mostrarPaso(1);
+  });
+
+  btnAtras3.addEventListener('click', function() {
+    mostrarPaso(2);
+  });
+
+  btnAtras4.addEventListener('click', function() {
+    mostrarPaso(3);
+  });
+
   /**
    * Verifica el estado de un envío mediante polling
    */
@@ -636,6 +849,17 @@
   // Manejar envío del formulario con seguridad mejorada
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
+
+    form.parentElement.classList.add('was-validated');
+
+    if (pasoActual !== 4) {
+      mostrarPaso(4);
+      return;
+    }
+
+    if (!validarCamposVisibles()) {
+      return;
+    }
     
     // Incrementar contador de intentos
     intentosEnvio++;
@@ -650,13 +874,6 @@
       return;
     }
     
-    // Validar tamaño de archivos
-    const validacionArchivos = validarTamañoArchivos();
-    if (!validacionArchivos.valido) {
-      mostrarModal(validacionArchivos.mensaje, 'error');
-      return;
-    }
-    
     // Validar DNI antes de enviar
     validarDNI();
     
@@ -666,14 +883,7 @@
     // Agregar clase para mostrar validación
     form.parentElement.classList.add('was-validated');
     
-    // Verificar validez del formulario
-    if (!form.checkValidity()) {
-      // Encontrar el primer elemento inválido y hacer focus
-      const primerInvalido = form.querySelector(':invalid');
-      if (primerInvalido) {
-        primerInvalido.focus();
-        primerInvalido.reportValidity();
-      }
+    if (!dniInput.checkValidity() || !telefonoInput.checkValidity()) {
       return;
     }
 
@@ -726,7 +936,6 @@
       // Construir objeto de datos
       let datos = {
         idEnvio: idEnvio,
-        nombreInstitucionEmpresa: '-',
         titulo: document.getElementById('titulo').value,
         apellidosRepresentante: document.getElementById('apellidosRepresentante').value,
         nombreRepresentante: document.getElementById('nombreRepresentante').value,
