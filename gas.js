@@ -31,6 +31,7 @@ function subirArchivo(fileName, archivoBase64, folderId) {
  */
 const SPREADSHEET_ID = '1UFaDuJZzJByfZde5gNCeM3OaqpeSQ_2uykFjYr4yRYY';
 const SHEET_NAME = 'Respuestas';
+const SHEET_PERSONAS = 'Personas';
 const FOLDER_ID = '1QjPLqJnKxA6VrMASnOTUieDFeIH0uoAo';//foto1
 const FOLDER_ID_FICHA_DIS = '13cBtzviuG9bcBJVfFAAU-4gTaCeXTDLa';//foto2
 const FOLDER_ID_ACTA_COMPROMISO = '198W0ZIkUCiZIjpMcZ7g0Ec4-GrFslrLA';//formato insc
@@ -59,6 +60,49 @@ function obtenerEstadoEnvio(idEnvio) {
     return JSON.parse(datos);
   }
   return null;
+}
+
+/**
+ * Guarda los inventores en la pestaña Personas
+ * @param {Object} datos - Objeto con los datos incluyendo inventores
+ * @param {string} fechaEnvio - Fecha de envío ya calculada en guardarDatos
+ * @return {void}
+ */
+function guardarInventores(datos, fechaEnvio) {
+  try {
+    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sheet = spreadsheet.getSheetByName(SHEET_PERSONAS);
+    
+    // Si la pestaña no existe, crearla
+    if (!sheet) {
+      sheet = spreadsheet.insertSheet(SHEET_PERSONAS);
+      // Agregar encabezados
+      sheet.appendRow(['Fecha de Envío', 'Título de la Invención', 'Apellidos', 'Nombres', 'DNI', 'Género']);
+    }
+    
+    const fecha = fechaEnvio || Utilities.formatDate(new Date(), 'America/Lima', 'dd/MM/yyyy HH:mm:ss');
+    const titulo = datos.titulo || '';
+    
+    // Guardar cada inventor
+    if (datos.inventores && Array.isArray(datos.inventores)) {
+      for (const inventor of datos.inventores) {
+        const fila = [
+          fecha,
+          titulo,
+          inventor.apellidos || '',
+          inventor.nombres || '',
+          inventor.dni || '',
+          inventor.genero || ''
+        ];
+        sheet.appendRow(fila);
+      }
+    }
+    
+    Logger.log('Inventores guardados exitosamente en la pestaña Personas');
+  } catch (error) {
+    Logger.log('Error al guardar inventores: ' + error.message);
+    throw error;
+  }
 }
 
 /**
@@ -127,6 +171,9 @@ function guardarDatos(datos) {
       datos.declaracion2 === true ? 'Si' : 'No',
       datos.declaracion3 === true ? 'Si' : 'No'
     ];
+    
+    // Guardar inventores en la pestaña Personas
+    guardarInventores(datos, fecha);
     
     // Agregar nueva fila al final
     sheet.appendRow(fila);

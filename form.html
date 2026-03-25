@@ -161,6 +161,82 @@
     font-weight: normal;
   }
   
+  /* Estilos de Inventores */
+  .form-concurso .inventores-section {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #0073aa;
+    border-radius: 4px;
+  }
+  .form-concurso .inventores-section h4 {
+    margin: 0 0 15px 0;
+    color: #1f3d52;
+    font-size: 16px;
+  }
+  .form-concurso .inventores-container {
+    margin-bottom: 15px;
+  }
+  .form-concurso .inventor-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    position: relative;
+  }
+  .form-concurso .inventor-item h5 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+  }
+  .form-concurso .inventor-item .form-group {
+    margin-bottom: 10px;
+  }
+  .form-concurso .inventor-item .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .form-concurso .inventor-item .form-row.full {
+    grid-template-columns: 1fr;
+  }
+  .form-concurso .btn-remove-inventor {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .form-concurso .btn-remove-inventor:hover {
+    background-color: #c82333;
+  }
+  .form-concurso #inventoresContainer .inventor-item:first-child .btn-remove-inventor {
+    display: none;
+  }
+  .form-concurso .btn-add-inventor {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+  }
+  .form-concurso .btn-add-inventor:hover {
+    background-color: #218838;
+  }
+  .form-concurso .btn-add-inventor:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
   /* Estilos del Modal */
   .modal-overlay {
     display: none;
@@ -321,6 +397,15 @@
         </select>
       </div>
 
+      <div class="inventores-section">
+        <h4 class="required">Inventores</h4>
+        <p class="field-help">Ingrese la información de los inventores (mínimo 1, máximo 6).</p>
+        <div class="inventores-container" id="inventoresContainer">
+          <!-- Inventores dinámicos se agregarán aquí -->
+        </div>
+        <button type="button" class="btn-add-inventor" id="btnAddInventor">+ Agregar Inventor</button>
+      </div>
+
       <div class="step-actions">
         <button type="button" class="btn-next" id="btnContinuar1">Continuar</button>
       </div>
@@ -467,7 +552,7 @@ Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que 
   const MAX_INTENTOS = 3;
   
   // URL del Web App de Google Apps Script (reemplazar con tu URL)
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7lsSC70rFele_a_OlkXYIX_0q-UkiDt8nNbwDrGmaiBKSr92Qu4qGBWk4_pQVmUmf/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKORgp4ufB5loc8UJFSk4L8hUYR90HyJpMDSmnB4thZZ3i9SEbom_0TUiG-eFVYIKw/exec';
 
   const form = document.getElementById('formConcurso');
   const mensaje = document.getElementById('mensaje');
@@ -836,6 +921,144 @@ Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que 
     return `envio_${timestamp}_${random}`;
   }
 
+  // ===== MANEJO DE INVENTORES =====
+  const MAX_INVENTORES = 6;
+  const inventoresContainer = document.getElementById('inventoresContainer');
+  const btnAddInventor = document.getElementById('btnAddInventor');
+  let inventorSequence = 1;
+
+  /**
+   * Renderiza el formulario de un inventor
+   */
+  function crearFormuarioInventor(numero) {
+    const inventorHTML = `
+      <div class="inventor-item" data-inventor="${numero}">
+        <h5>Inventor ${numero}</h5>
+        <button type="button" class="btn-remove-inventor" onclick="removerInventor(${numero})">Remover</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="required">Apellidos</label>
+            <input type="text" class="inventor-apellidos" data-numero="${numero}" required>
+          </div>
+          <div class="form-group">
+            <label class="required">Nombres</label>
+            <input type="text" class="inventor-nombres" data-numero="${numero}" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="required">DNI</label>
+            <input type="text" class="inventor-dni" data-numero="${numero}" maxlength="8" pattern="[0-9]{8}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+          </div>
+          <div class="form-group">
+            <label class="required">Género</label>
+            <select class="inventor-genero" data-numero="${numero}" required>
+              <option value="">Seleccione...</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    `;
+    return inventorHTML;
+  }
+
+  /**
+   * Agrega un nuevo inventor al formulario
+   */
+  window.agregarInventor = function() {
+    if (inventoresContainer.children.length >= MAX_INVENTORES) {
+      alert(`Se ha alcanzado el máximo de ${MAX_INVENTORES} inventores`);
+      return;
+    }
+
+    inventorSequence++;
+    inventoresContainer.insertAdjacentHTML('beforeend', crearFormuarioInventor(inventorSequence));
+    actualizarEstadoBtnAgregar();
+  };
+
+  /**
+   * Remueve un inventor del formulario
+   */
+  window.removerInventor = function(numero) {
+    const inventorItem = document.querySelector(`.inventor-item[data-inventor="${numero}"]`);
+    if (inventorItem) {
+      inventorItem.remove();
+      // Recalcular si hay al menos 1 inventor
+      if (inventoresContainer.children.length === 0) {
+        inventoresContainer.innerHTML = crearFormuarioInventor(1);
+        inventorSequence = 1;
+      }
+      actualizarEstadoBtnAgregar();
+    }
+  };
+
+  /**
+   * Actualiza el estado del botón "Agregar Inventor"
+   */
+  function actualizarEstadoBtnAgregar() {
+    btnAddInventor.disabled = inventoresContainer.children.length >= MAX_INVENTORES;
+  }
+
+  /**
+   * Obtiene los datos de todos los inventores
+   */
+  function obtenerInventores() {
+    const inventorItems = Array.from(inventoresContainer.querySelectorAll('.inventor-item'));
+    const inventores = [];
+    
+    inventorItems.forEach((item) => {
+      const num = item.getAttribute('data-inventor');
+      const apellidos = item.querySelector(`.inventor-apellidos[data-numero="${num}"]`).value;
+      const nombres = item.querySelector(`.inventor-nombres[data-numero="${num}"]`).value;
+      const dni = item.querySelector(`.inventor-dni[data-numero="${num}"]`).value;
+      const genero = item.querySelector(`.inventor-genero[data-numero="${num}"]`).value;
+      
+      if (apellidos || nombres || dni || genero) {
+        inventores.push({
+          apellidos,
+          nombres,
+          dni,
+          genero
+        });
+      }
+    });
+    
+    return inventores;
+  }
+
+  /**
+   * Valida que haya al menos 1 inventor y máximo 6
+   */
+  function validarInventores() {
+    const inventores = obtenerInventores();
+    
+    if (inventores.length === 0) {
+      mostrarModal('Debe agregar al menos 1 inventor', 'error');
+      return false;
+    }
+    
+    // Validar que todos los campos obligatorios estén llenos
+    for (const inventor of inventores) {
+      if (!inventor.apellidos || !inventor.nombres || !inventor.dni || !inventor.genero) {
+        mostrarModal('Por favor complete todos los campos de los inventores', 'error');
+        return false;
+      }
+      if (!/^[0-9]{8}$/.test(inventor.dni)) {
+        mostrarModal(`El DNI "${inventor.dni}" no es válido (debe tener 8 dígitos)`, 'error');
+        return false;
+      }
+    }
+    
+    return true;
+  }
+
+  // Inicializar con 1 inventor
+  inventoresContainer.innerHTML = crearFormuarioInventor(1);
+  btnAddInventor.addEventListener('click', agregarInventor);
+  actualizarEstadoBtnAgregar();
+
   btnContinuar1.addEventListener('click', function() {
     form.parentElement.classList.add('was-validated');
 
@@ -843,6 +1066,10 @@ Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que 
     validarTelefono(telefonoInput);
 
     if (!validarCamposVisibles()) {
+      return;
+    }
+
+    if (!validarInventores()) {
       return;
     }
 
@@ -1048,6 +1275,7 @@ Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que 
         declaracion1: document.getElementById('declaracion1').checked,
         declaracion2: document.getElementById('declaracion2').checked,
         declaracion3: document.getElementById('declaracion3').checked,
+        inventores: obtenerInventores(),
         // Campos de seguridad
         honeypot: document.getElementById('honeypot').value,
         token: formularioToken,
