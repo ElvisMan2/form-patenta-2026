@@ -1,7 +1,7 @@
 <style>
   .form-concurso {
     font-family: Arial, sans-serif;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 20px;
   }
@@ -98,6 +98,12 @@
     color: #4d4d4d;
     line-height: 1.45;
     text-align: justify;
+  }
+  .form-concurso .field-help {
+    margin: 0 0 8px;
+    color: #4d4d4d;
+    font-size: 14px;
+    line-height: 1.45;
   }
   .form-concurso .step-actions {
     margin-top: 10px;
@@ -326,22 +332,31 @@
 Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que serán usadas para la publicación de la invención, así como un vídeo de la invención que se utilizará para el proceso de evaluación de jurado calificador.</p>
 
       <div class="form-group">
-        <label class="required" for="fichaPostulante">Formato de inscripcion (Excel max 10 mb)</label>
+        <label class="required" for="fichaPostulante">Formato de Inscripción</label>
+        <p class="field-help">Descargue, complete, guarde en <a href="https://www.patenta.pe/wp-content/uploads/2026/03/KIWIE-2026-Registration-Form.xlsx"><u>Formato Excel</u></a></p>
+        <p class="field-help">Complete 1 formulario por cada invención.</p>
+        <p class="field-help">No acumule hojas de Excel.</p>
+        <p class="field-help">Tamaño máximo: 10 MB.</p>
         <input type="file" id="fichaPostulante" name="fichaPostulante" accept=".xlsx,.xls,.xlsm" required>
       </div>
 
       <div class="form-group">
-        <label class="required" for="fichaInvencion">Fotografia_01 (Imagen max 10 mb)</label>
+        <label class="required" for="fichaInvencion">Fotografía 1</label>
+        <p class="field-help">Ingrese una primera fotografía de la invención. Esta será utilizada en la publicación en línea y será promocionada para su calificación. Procure utilizar una cámara de buena resolución y buena iluminación, o en su defecto diseño gráfico o asistido por computadora.</p>
+        <p class="field-help">Sube 1 archivo compatible: imagen. Tamaño máximo: 10 MB.</p>
         <input type="file" id="fichaInvencion" name="fichaInvencion" accept=".jpg,.jpeg,.png,.webp" required>
       </div>
 
       <div class="form-group">
-        <label class="required" for="actaCompromiso">Fotografia_02 (Imagen max 10 mb)</label>
+        <label class="required" for="actaCompromiso">Fotografía 2</label>
+        <p class="field-help">Ingrese una primera fotografía de la invención. Esta será utilizada en la publicación en línea y será promocionada para su calificación. Procure utilizar una cámara de buena resolución y buena iluminación, o en su defecto diseño gráfico o asistido por computadora.</p>
+        <p class="field-help">Sube 1 archivo compatible: imagen. Tamaño máximo: 10 MB.</p>
         <input type="file" id="actaCompromiso" name="actaCompromiso" accept=".jpg,.jpeg,.png,.webp" required>
       </div>
 
       <div class="form-group">
-        <label class="required" for="videoInvento">video del invento</label>
+        <label class="required" for="videoInvento">Video del Invento</label>
+        <p class="field-help">El video del invento no debe durar más de 2 minutos. Debe ser hablado o subtitulado en inglés. Responda indicando el enlace a un video de Youtube o a otro medio de visualización directa: (dropbox, Outlook, Onedrive, Google Drive, entre otros). El video es obligatorio, debe verificar los permisos de visualización o descarga. Si no lo adjunta en el presente formulario, puede remitirlo a patenta@indecopi.gob.pe, como máximo hasta el 13 de mayo, a las 12:00 am, a fin de cumplir el plazo para remitir a la organización.</p>
         <input type="url" id="videoInvento" name="videoInvento"
                placeholder="https://www.youtube.com/watch?v=..."
                title="Ingrese un enlace valido de YouTube o similar"
@@ -359,12 +374,14 @@ Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que 
       <p class="section-intro">Registre los datos técnicos del proyecto: título, expediente y descripción.</p>
 
       <div class="form-group">
-        <label class="required" for="titulo">Título del Proyecto</label>
+        <label class="required" for="titulo">Título de la invención</label>
+        <p class="field-help">Indique el título de la invención de acuerdo a como aparece en la solicitud de patente o la patente otorgada.</p>
         <input type="text" id="titulo" name="titulo" required>
       </div>
 
       <div class="form-group">
-        <label class="required" for="expediente">expediente</label>
+        <label class="required" for="expediente">Numero de expediente o número de título de patente otorgada</label>
+        <p class="field-help">Si no conoce el número de patente o solicitud de patente, puede consultarlo solicitando una cita virtual en www.patenta.pe/citas-virtuales, o llamando a los teléfonos 2247800 Anexos: 3805 (de acuerdo a disponibilidad). El formato del número de expediente es: "1234-2020/DIN".</p>
         <input type="text" id="expediente" name="expediente"
                minlength="15" maxlength="15"
                pattern="^.{12}DIN$"
@@ -373,7 +390,8 @@ Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que 
       </div>
 
       <div class="form-group">
-        <label class="required" for="descripcion">descripción</label>
+        <label class="required" for="descripcion">Descripción de la Invención</label>
+        <p class="field-help">Describa claramente en qué consiste la invención y qué problema busca resolver que la haga diferente a otros productos/procedimientos, así como su impacto social, económico o comercial. Puede usar la misma descripción que la del formulario de inscripción. Esta descripción será utilizada para emitir notas de prensa o producir contenido para la difusión de la participación de la delegación.</p>
         <textarea id="descripcion" name="descripcion" rows="5" minlength="300" required></textarea>
       </div>
 
@@ -596,15 +614,27 @@ Así mismo, se le solicitará 2 fotografías en buena resolución y tamaño que 
    * Validar tamaño de archivos
    */
   function validarTamañoArchivos(idsArchivos) {
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const limitesPorArchivo = {
+      fichaPostulante: 10 * 1024 * 1024,
+      fichaInvencion: 10 * 1024 * 1024,
+      actaCompromiso: 10 * 1024 * 1024
+    };
+    const nombresArchivos = {
+      fichaPostulante: 'Formato de Inscripción',
+      fichaInvencion: 'Fotografía 1',
+      actaCompromiso: 'Fotografía 2'
+    };
     const archivos = idsArchivos || ['fichaPostulante', 'fichaInvencion', 'actaCompromiso'];
     
     for (const archivo of archivos) {
       const input = document.getElementById(archivo);
-      if (input && input.files[0] && input.files[0].size > maxSize) {
+      const limite = limitesPorArchivo[archivo] || 10 * 1024 * 1024;
+      if (input && input.files[0] && input.files[0].size > limite) {
+        const nombre = nombresArchivos[archivo] || archivo;
+        const limiteMB = Math.round(limite / (1024 * 1024));
         return {
           valido: false,
-          mensaje: `El archivo ${archivo} es muy grande. Máximo 10MB permitido.`
+          mensaje: `El archivo ${nombre} es muy grande. Máximo ${limiteMB}MB permitido.`
         };
       }
     }
